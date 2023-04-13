@@ -1,17 +1,17 @@
 version: 1
 send_anonymous_usage_stats: false
 project_id: tap-pulumi-cloud
+default_environment: dev
 environments:
 - name: dev
 plugins:
   extractors:
   - name: tap-pulumi-cloud
-    label: Pulumi Cloud
     namespace: pulumicloud
-    description: Infrastructure as Code for Engineers
-    repository: https://github.com/edgarrmondragon/tap-pulumi-cloud
+    label: Pulumi Cloud
     docs: https://github.com/edgarrmondragon/tap-pulumi-cloud#readme
     pip_url: -e .
+    description: Infrastructure as Code for Engineers
     capabilities:
     - state
     - catalog
@@ -29,7 +29,13 @@ plugins:
       kind: object
       label: Requests Cache Config
       description: Configuration for requests cache
+    repository: https://github.com/edgarrmondragon/tap-pulumi-cloud
+    config:
+      organizations: [meltano]
   loaders:
   - name: target-jsonl
     variant: andyh1203
     pip_url: target-jsonl
+  - name: target-duckdb
+    variant: jwills
+    pip_url: target-duckdb~=0.4
