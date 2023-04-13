@@ -40,7 +40,7 @@ jobs:
       run: |
         pipx install nox
         pipx inject nox nox-poetry
-        tox --version
+        nox --version
 
     - name: Run tests
       env:
