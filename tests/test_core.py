@@ -8,10 +8,11 @@ from singer_sdk.testing import SuiteConfig, get_tap_test_class
 
 from tap_pulumi_cloud.tap import TapPulumiCloud
 
-SAMPLE_CONFIG: dict[str, Any] = {}
+SAMPLE_CONFIG: dict[str, Any] = {"organizations": ["meltano"]}
 
 # Run standard built-in tap tests from the SDK:
 TestTapPulumiCloud = get_tap_test_class(
     TapPulumiCloud,
+    config=SAMPLE_CONFIG,
     suite_config=SuiteConfig(max_records_limit=10),
 )

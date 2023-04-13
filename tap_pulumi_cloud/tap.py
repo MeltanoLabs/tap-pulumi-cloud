@@ -24,6 +24,12 @@ class TapPulumiCloud(Tap):
             description="API Token for Pulumi Cloud",
         ),
         th.Property(
+            "organizations",
+            th.ArrayType(th.StringType),
+            description="List of organizations to sync",
+            required=True,
+        ),
+        th.Property(
             "start_date",
             th.DateTimeType,
             description="Earliest datetime to get data from",
@@ -74,4 +80,6 @@ class TapPulumiCloud(Tap):
         return [
             streams.Stacks(tap=self),
             streams.StackUpdates(tap=self),
+            streams.OrganizationMembers(tap=self),
+            streams.OrganizationTeams(tap=self),
         ]

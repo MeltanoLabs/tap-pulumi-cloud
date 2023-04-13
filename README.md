@@ -2,7 +2,7 @@
 
 Singer tap for Pulumi Cloud.
 
-Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
+Built with the [Meltano Singer SDK](https://sdk.meltano.com).
 
 ## Capabilities
 
@@ -11,16 +11,26 @@ Built with the [Meltano Tap SDK](https://sdk.meltano.com) for Singer Taps.
 * `discover`
 * `about`
 * `stream-maps`
+* `schema-flattening`
 
 ## Settings
 
-- [ ] `Developer TODO:` Declare tap settings here.
+| Setting             | Required | Default | Description |
+|:--------------------|:--------:|:-------:|:------------|
+| token               | True     | None    | API Token for Pulumi Cloud |
+| organizations       | True     | None    | List of organizations to sync |
+| start_date          | False    | None    | Earliest datetime to get data from |
+| requests_cache      | False    | None    | Cache configuration for HTTP requests |
+| stream_maps         | False    | None    | Config object for stream maps capability. For more information check out [Stream Maps](https://sdk.meltano.com/en/latest/stream_maps.html). |
+| stream_map_config   | False    | None    | User-defined config values to be used within map expressions. |
+| flattening_enabled  | False    | None    | 'True' to enable schema flattening and automatically expand nested properties. |
+| flattening_max_depth| False    | None    | The max depth to flatten schemas. |
 
 A full list of supported settings and capabilities is available by running: `tap-pulumi-cloud --about`
 
 ### Source Authentication and Authorization
 
-- [ ] `Developer TODO:` If your tap requires special access on the source system, or any special authentication requirements, provide those here.
+See https://www.pulumi.com/docs/reference/cloud-rest-api/#authentication.
 
 ## Usage
 
