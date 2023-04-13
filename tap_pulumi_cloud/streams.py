@@ -172,6 +172,7 @@ class OrganizationMembers(_OrgPartitionedStream):
 
     name = "organization_members"
     path = "/api/orgs/{org_name}/members"
+    primary_keys = ["org_name", "user_name"]
     records_jsonpath = "$.members[*]"
 
     schema = th.PropertiesList(
@@ -186,13 +187,13 @@ class OrganizationMembers(_OrgPartitionedStream):
             description="The role of the user in the organization.",
         ),
         th.Property(
+            "user_name",
+            th.StringType,
+            description="The name of the user.",
+        ),
+        th.Property(
             "user",
             th.ObjectType(
-                th.Property(
-                    "name",
-                    th.StringType,
-                    description="The name of the user.",
-                ),
                 th.Property(
                     "github_login",
                     th.StringType,
@@ -239,12 +240,28 @@ class OrganizationMembers(_OrgPartitionedStream):
         params["type"] = "backend"
         return params
 
+    def post_process(self, row: dict, context: dict | None = None) -> dict | None:
+        """Post-process a row.
+
+        Args:
+            row: A row.
+            context: The stream sync context.
+
+        Returns:
+            The processed row.
+        """
+        new_row = super().post_process(row, context)
+        if new_row:
+            new_row["user_name"] = new_row["user"].pop("name")
+        return new_row
+
 
 class OrganizationTeams(_OrgPartitionedStream):
     """Organization teams stream."""
 
     name = "organization_teams"
     path = "/api/orgs/{org_name}/teams"
+    primary_keys = ["org_name", "name"]
     records_jsonpath = "$.teams[*]"
 
     schema = th.PropertiesList(
