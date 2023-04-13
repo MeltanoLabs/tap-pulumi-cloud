@@ -10,7 +10,8 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      SETUPTOOLS_USE_DISTUTILS: stdlib
+      FORCE_COLOR: "1"
+      NOXSESSION: tests-${{ matrix.python-version }}
       PIP_CONSTRAINT: .github/workflows/constraints.txt
     strategy:
       matrix:
@@ -35,17 +36,18 @@ jobs:
         pipx install poetry
         poetry --version
 
-    - name: Install tox
+    - name: Install Nox
       run: |
-        pipx install tox
-        tox --version
+        pipx install nox
+        pipx inject nox nox-poetry
+        nox --version
 
-    - name: Run lint command from tox.ini
+    - name: Run tests
       env:
         TAP_PULUMI_CLOUD_TOKEN: ${{ secrets.TAP_PULUMI_CLOUD_TOKEN }}
         TAP_PULUMI_CLOUD_START_DATE: ${{ secrets.TAP_PULUMI_CLOUD_START_DATE }}
       run: |
-        tox -e pytest
+        nox
 
   pre-commit:
     runs-on: ubuntu-latest

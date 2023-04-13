@@ -1,0 +1,6 @@
+[flake8]
+ignore = DAR
+max-line-length = 88
+docstring-convention = google
+per-file-ignores =
+    tests/*:DAR
