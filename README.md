@@ -7,11 +7,13 @@ Built with the [Meltano Singer SDK](https://sdk.meltano.com).
 ## Capabilities
 
 * `catalog`
-* `state`
 * `discover`
 * `about`
 * `stream-maps`
 * `schema-flattening`
+
+> **Note**
+> Incremental replication is not supported by any streams, so the `state` capability is not supported by this tap.
 
 ## Settings
 
@@ -45,8 +47,6 @@ tap-pulumi-cloud --config CONFIG --discover > ./catalog.json
 ```
 
 ## Developer Resources
-
-- [ ] `Developer TODO:` As a first step, scan the entire project for the text "`TODO:`" and complete any recommended steps, deleting the "TODO" references once completed.
 
 ### Initialize your Development Environment
 
@@ -92,8 +92,9 @@ Now you can test and orchestrate using Meltano:
 ```bash
 # Test invocation:
 meltano invoke tap-pulumi-cloud --version
-# OR run a test `elt` pipeline:
-meltano elt tap-pulumi-cloud target-jsonl
+
+# OR run a pipeline:
+meltano run tap-pulumi-cloud target-jsonl
 ```
 
 ### SDK Dev Guide
