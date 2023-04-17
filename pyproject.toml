@@ -1,6 +1,10 @@
+[build-system]
+requires = ["poetry-core>=1,<2"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "tap-pulumi-cloud"
-version = "0.0.1"
+version = "0.0.0"
 description = "`tap-pulumi-cloud` is a Singer tap for Pulumi Cloud, built with the Meltano SDK for Singer Taps."
 authors = ["Edgar Ramírez-Mondragón <edgarrm358@gmail.com>"]
 keywords = [
@@ -20,19 +24,27 @@ python = "<3.12,>=3.7.1"
 requests-cache = "^1.0.1"
 singer-sdk = "0.24.0"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev.dependencies]
 singer-sdk = { version = "0.24.0", extras = ["testing"] }
 
-[tool.isort]
-profile = "black"
-multi_line_output = 3 # Vertical Hanging Indent
-use_parentheses = true
-include_trailing_comma = true
-src_paths = "tap_pulumi_cloud"
-known_first_party = "tap_pulumi_cloud"
-add_imports = [
-  "from __future__ import annotations",
-]
+[tool.poetry.scripts]
+# CLI declaration
+"tap-pulumi-cloud" = "tap_pulumi_cloud.tap:TapPulumiCloud.cli"
+
+[tool.poetry-dynamic-versioning]
+enable = true
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- elif revision is not none -%}
+        {{ serialize_pep440(base, stage, revision + 1, dev=distance, metadata=[commit]) }}
+    {%- else -%}
+        {{ serialize_pep440(bump_version(base), stage, revision, dev=distance, metadata=[commit]) }}
+    {%- endif -%}
+"""
+metadata = true
+style = "pep440"
+vcs = "git"
 
 [tool.pytest.ini_options]
 addopts = "-vvv"
@@ -44,14 +56,6 @@ warn_unused_configs = true
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
 module = ["backoff.*"]
-
-[build-system]
-requires = ["poetry-core>=1,<2"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-# CLI declaration
-"tap-pulumi-cloud" = "tap_pulumi_cloud.tap:TapPulumiCloud.cli"
 
 [tool.ruff]
 ignore = [
