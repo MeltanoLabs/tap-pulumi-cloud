@@ -48,21 +48,3 @@ jobs:
         TAP_PULUMI_CLOUD_START_DATE: ${{ secrets.TAP_PULUMI_CLOUD_START_DATE }}
       run: |
         nox
-
-  pre-commit:
-    runs-on: ubuntu-latest
-    env:
-      FORCE_COLOR: "1"
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3.5.2
-
-    - name: Set up Python
-      uses: actions/setup-python@v4.6.0
-      with:
-        python-version: "3.11"
-
-    - uses: pre-commit/action@v3.0.0
-
-    - uses: pre-commit-ci/lite-action@v1.0.1
-      if: always()
