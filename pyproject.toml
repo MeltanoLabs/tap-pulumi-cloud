@@ -83,6 +83,7 @@ allow-star-arg-any = true
 
 [tool.ruff.isort]
 known-first-party = ["tap_pulumi_cloud"]
+required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.pydocstyle]
 convention = "google"
