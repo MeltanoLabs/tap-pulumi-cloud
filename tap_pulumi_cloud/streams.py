@@ -109,7 +109,7 @@ class StackUpdates(PulumiCloudStream):
     schema = th.PropertiesList(
         th.Property(
             "version",
-            th.StringType,
+            th.IntegerType,
             description="The ID of the update.",
         ),
         th.Property(
