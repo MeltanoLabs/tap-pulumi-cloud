@@ -34,32 +34,6 @@ singer-sdk = { version = "0.28.0", extras = ["testing"] }
 # CLI declaration
 "tap-pulumi-cloud" = "tap_pulumi_cloud.tap:TapPulumiCloud.cli"
 
-[tool.pytest.ini_options]
-addopts = "-vvv"
-
-[tool.mypy]
-python_version = "3.10"
-warn_unused_configs = true
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = ["backoff.*"]
-
-[tool.poetry-dynamic-versioning]
-enable = true
-format-jinja = """
-    {%- if distance == 0 -%}
-        {{ serialize_pep440(base, stage, revision) }}
-    {%- elif revision is not none -%}
-        {{ serialize_pep440(base, stage, revision + 1, dev=distance, metadata=[commit]) }}
-    {%- else -%}
-        {{ serialize_pep440(bump_version(base), stage, revision, dev=distance, metadata=[commit]) }}
-    {%- endif -%}
-"""
-metadata = true
-style = "pep440"
-vcs = "git"
-
 [tool.ruff]
 ignore = [
   "ANN101", # missing-type-self
@@ -87,3 +61,29 @@ required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[tool.pytest.ini_options]
+addopts = "-vvv"
+
+[tool.mypy]
+python_version = "3.10"
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+ignore_missing_imports = true
+module = ["backoff.*"]
+
+[tool.poetry-dynamic-versioning]
+enable = true
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- elif revision is not none -%}
+        {{ serialize_pep440(base, stage, revision + 1, dev=distance, metadata=[commit]) }}
+    {%- else -%}
+        {{ serialize_pep440(bump_version(base), stage, revision, dev=distance, metadata=[commit]) }}
+    {%- endif -%}
+"""
+metadata = true
+style = "pep440"
+vcs = "git"
