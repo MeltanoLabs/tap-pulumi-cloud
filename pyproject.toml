@@ -46,6 +46,9 @@ target-version = "py37"
 
 [tool.ruff.per-file-ignores]
 "noxfile.py" = ["ANN"]
+"tap_pulumi_cloud/streams.py" = [
+    "RUF012",  # mutable-class-default
+]
 "tests/*" = [
   "ANN201",  # missing-return-type-public-function
   "S101",    # assert
