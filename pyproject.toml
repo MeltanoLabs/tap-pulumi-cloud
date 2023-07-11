@@ -25,10 +25,10 @@ documentation = "https://github.com/edgarrmondragon/tap-pulumi-cloud#readme"
 pyhumps = "^3.8.0"
 python = "<3.12,>=3.7.1"
 requests-cache = "^1.0.1"
-singer-sdk = "0.29.0"
+singer-sdk = "0.30.0"
 
 [tool.poetry.group.dev.dependencies]
-singer-sdk = { version = "0.29.0", extras = ["testing"] }
+singer-sdk = { version = "0.30.0", extras = ["testing"] }
 
 [tool.poetry.scripts]
 # CLI declaration
