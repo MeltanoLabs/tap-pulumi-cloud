@@ -38,11 +38,15 @@ singer-sdk = { version = ">=0.31.1,<0.33.0", extras = ["testing"] }
 ignore = [
   "ANN101", # missing-type-self
   "DJ",     # flake8-django
+  "FIX002", # line-contains-todo
 ]
 line-length = 88
 select = ["ALL"]
 src = ["tap_pulumi_cloud", "tests"]
-target-version = "py37"
+target-version = "py38"
+unfixable = [
+  "ERA",  # Don't remove commented-out code
+]
 
 [tool.ruff.per-file-ignores]
 "noxfile.py" = ["ANN"]

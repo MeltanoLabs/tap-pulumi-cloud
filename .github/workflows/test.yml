@@ -49,6 +49,7 @@ jobs:
     - name: Run tests
       env:
         TAP_PULUMI_CLOUD_TOKEN: ${{ secrets.TAP_PULUMI_CLOUD_TOKEN }}
+        TAP_PULUMI_CLOUD_ORGANIZATIONS: ${{ secrets.TAP_PULUMI_CLOUD_ORGANIZATIONS }}
         TAP_PULUMI_CLOUD_START_DATE: ${{ secrets.TAP_PULUMI_CLOUD_START_DATE }}
       run: |
         nox
