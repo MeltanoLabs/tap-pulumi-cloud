@@ -9,9 +9,7 @@ requires = [
 name = "tap-pulumi-cloud"
 version = "0.0.0"
 description = "`tap-pulumi-cloud` is a Singer tap for Pulumi Cloud, built with the Meltano SDK for Singer Taps."
-authors = [
-  "Edgar Ramírez-Mondragón <edgarrm358@gmail.com>",
-]
+authors = ["Edgar Ramírez-Mondragón <edgarrm358@gmail.com>"]
 keywords = [
   "ELT",
   "singer.io",
@@ -23,20 +21,18 @@ homepage = "https://github.com/edgarrmondragon/tap-pulumi-cloud"
 repository = "https://github.com/edgarrmondragon/tap-pulumi-cloud"
 documentation = "https://github.com/edgarrmondragon/tap-pulumi-cloud#readme"
 
-[tool.poetry.group.dev.dependencies]
-singer-sdk = { version = "~=0.37.0", extras = [
-  "testing",
-] }
-
-[tool.poetry.scripts]
-# CLI declaration
-"tap-pulumi-cloud" = "tap_pulumi_cloud.tap:TapPulumiCloud.cli"
-
 [tool.poetry.dependencies]
 pyhumps = "^3.8.0"
 python = ">=3.8,<4"
 requests-cache = "^1.0.1"
 singer-sdk = "~=0.37.0"
+
+[tool.poetry.group.dev.dependencies]
+singer-sdk = { version = "~=0.37.0", extras = ["testing"] }
+
+[tool.poetry.scripts]
+# CLI declaration
+"tap-pulumi-cloud" = "tap_pulumi_cloud.tap:TapPulumiCloud.cli"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -55,53 +51,42 @@ vcs = "git"
 
 [tool.ruff]
 line-length = 88
-src = [
-  "tap_pulumi_cloud",
-  "tests",
-]
+src = ["tap_pulumi_cloud", "tests"]
 target-version = "py38"
-
-[tool.ruff.lint.isort]
-known-first-party = [
-  "tap_pulumi_cloud",
-]
-required-imports = [
-  "from __future__ import annotations",
-]
-
-[tool.ruff.lint.pydocstyle]
-convention = "google"
-
-[tool.ruff.lint.flake8-annotations]
-allow-star-arg-any = true
-
-[tool.ruff.lint.per-file-ignores]
-"noxfile.py" = [
-  "ANN",
-]
-"tap_pulumi_cloud/streams.py" = [
-  "RUF012", # mutable-class-default
-]
-"tests/*" = [
-  "ANN201", # missing-return-type-public-function
-  "S101",   # assert
-  "SLF001", # private-member-access
-]
 
 [tool.ruff.lint]
 ignore = [
   "ANN101", # missing-type-self
   "DJ",     # flake8-django
   "FIX002", # line-contains-todo
-  "COM812", # missing-trailing-comma
-  "ISC001", # single-line-implicit-string-concatenation
+  "COM812",  # missing-trailing-comma
+  "ISC001",  # single-line-implicit-string-concatenation
 ]
-select = [
-  "ALL",
-]
+select = ["ALL"]
 unfixable = [
-  "ERA", # Don't remove commented-out code
+  "ERA",  # Don't remove commented-out code
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"noxfile.py" = ["ANN"]
+"tap_pulumi_cloud/streams.py" = [
+    "RUF012",  # mutable-class-default
+]
+"tests/*" = [
+  "ANN201",  # missing-return-type-public-function
+  "S101",    # assert
+  "SLF001",  # private-member-access
+]
+
+[tool.ruff.lint.flake8-annotations]
+allow-star-arg-any = true
+
+[tool.ruff.lint.isort]
+known-first-party = ["tap_pulumi_cloud"]
+required-imports = ["from __future__ import annotations"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
 
 [tool.pytest.ini_options]
 addopts = "-vvv"
@@ -112,6 +97,4 @@ warn_unused_configs = true
 
 [[tool.mypy.overrides]]
 ignore_missing_imports = true
-module = [
-  "backoff.*",
-]
+module = ["backoff.*"]
