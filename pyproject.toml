@@ -64,6 +64,14 @@ src = [
 lint.select = [
   "ALL",
 ]
+lint.ignore = [
+  "ANN101", # missing-type-self
+  "COM812", # missing-trailing-comma
+  "DJ",     # flake8-django
+  "FIX002", # line-contains-todo
+  "ISC001", # single-line-implicit-string-concatenation
+]
+
 lint.per-file-ignores."noxfile.py" = [
   "ANN",
 ]
@@ -86,13 +94,6 @@ lint.isort.required-imports = [
   "from __future__ import annotations",
 ]
 lint.pydocstyle.convention = "google"
-lint.ignore = [
-  "ANN101", # missing-type-self
-  "COM812", # missing-trailing-comma
-  "DJ",     # flake8-django
-  "FIX002", # line-contains-todo
-  "ISC001", # single-line-implicit-string-concatenation
-]
 
 [tool.pytest.ini_options]
 addopts = "-vvv"
