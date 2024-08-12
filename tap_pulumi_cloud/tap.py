@@ -79,7 +79,9 @@ class TapPulumiCloud(Tap):
         """
         return [
             stacks.Stacks(tap=self),
+            stacks.StackDetails(tap=self),
             stacks.StackUpdates(tap=self),
+            stacks.StackResources(tap=self),
             organizations.OrganizationMembers(tap=self),
             organizations.OrganizationTeams(tap=self),
         ]
