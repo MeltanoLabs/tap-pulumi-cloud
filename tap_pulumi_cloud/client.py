@@ -72,3 +72,12 @@ class PulumiCloudStream(RESTStream):
     ) -> dict | None:
         """Post-process a row of data."""
         return humps.decamelize(row)
+
+
+class _OrgPartitionedStream(PulumiCloudStream):
+    """Base class for streams that are partitioned by organization."""
+
+    @property
+    def partitions(self) -> list[dict] | None:
+        """List of organizations to sync."""
+        return [{"org_name": org} for org in self.config["organizations"]]
