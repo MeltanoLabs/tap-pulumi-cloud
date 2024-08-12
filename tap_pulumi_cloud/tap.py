@@ -8,7 +8,7 @@ import requests_cache
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
-from tap_pulumi_cloud import organizations, stacks
+from tap_pulumi_cloud import organizations, stacks, policies
 
 
 class TapPulumiCloud(Tap):
@@ -86,4 +86,6 @@ class TapPulumiCloud(Tap):
             stacks.StackPolicyPacks(tap=self),
             organizations.OrganizationMembers(tap=self),
             organizations.OrganizationTeams(tap=self),
+            policies.PolicyGroupsList(tap=self),
+            policies.PolicyGroups(tap=self),
         ]
