@@ -9,10 +9,10 @@ from singer_sdk import typing as th
 from tap_pulumi_cloud.client import PulumiCloudStream, _OrgPartitionedStream
 
 
-class OrganizationPolicyGroupsList(_OrgPartitionedStream):
+class PolicyGroupsList(_OrgPartitionedStream):
     """Auxiliar stream to get Organization Policy Groups names."""
 
-    name = "organization_policy_groups_list"
+    name = "policy_groups_list"
     path = "/api/orgs/{org_name}/policygroups"
     primary_keys = ["org_name", "name"]
     records_jsonpath = "$.policyGroups[*]"
@@ -63,15 +63,15 @@ class OrganizationPolicyGroupsList(_OrgPartitionedStream):
         }
 
 
-class OrganizationPolicyGroups(PulumiCloudStream):
+class PolicyGroups(PulumiCloudStream):
     """Organization Policy Groups."""
 
-    name = "organization_policy_groups"
+    name = "policy_groups"
     path = "/api/orgs/{org_name}/policygroups/{policy_group_name}"
     primary_keys = ["org_name", "policy_group_name"]
     
 
-    parent_stream_type = OrganizationPolicyGroupsList
+    parent_stream_type = PolicyGroupsList
 
     schema = th.PropertiesList(
         th.Property(
