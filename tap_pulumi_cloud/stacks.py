@@ -313,3 +313,114 @@ class StackResources(PulumiCloudStream):
             description="The property dependencies of the resource.",
         ),
     ).to_dict()
+
+
+
+class StackPolicyGroups(PulumiCloudStream):
+    """Stack policy groups stream."""
+
+    name = "stack_policy_groups"
+    path = "/api/stacks/{org_name}/{project_name}/{stack_name}/policygroups"
+    primary_keys = ["org_name", "project_name", "stack_name", "name"]
+    records_jsonpath = "$.policyGroups[*]"
+
+    parent_stream_type = Stacks
+
+    schema = th.PropertiesList(
+        th.Property(
+            "org_name",
+            th.StringType,
+            description="The name of the organization that owns the stack.",
+        ),
+        th.Property(
+            "project_name",
+            th.StringType,
+            description="The name of the project that contains the stack.",
+        ),
+        th.Property(
+            "stack_name",
+            th.StringType,
+            description="The name of the stack.",
+        ),
+        th.Property(
+            "name",
+            th.StringType,
+            description="The name of the policy group.",
+        ),
+        th.Property(
+            "is_org_default",
+            th.BooleanType,
+            description="Is the policy group the default for the organization.",
+        ),
+        th.Property(
+            "num_stacks",
+            th.IntegerType,
+            description="The number of stacks the policy group is applied to.",
+        ),
+        th.Property(
+            "num_enabled_policy_packs",
+            th.IntegerType,
+            description="The number of policy packs enabled in the policy group.",
+        ),
+
+    ).to_dict()
+
+
+class StackPolicyPacks(PulumiCloudStream):
+    """Stack policy groups stream."""
+
+    name = "stack_policy_packs"
+    path = "/api/stacks/{org_name}/{project_name}/{stack_name}/policypacks"
+    primary_keys = ["org_name", "project_name", "stack_name", "name"]
+    records_jsonpath = "$.requiredPolicies[*]"
+
+    parent_stream_type = Stacks
+
+    schema = th.PropertiesList(
+        th.Property(
+            "org_name",
+            th.StringType,
+            description="The name of the organization that owns the stack.",
+        ),
+        th.Property(
+            "project_name",
+            th.StringType,
+            description="The name of the project that contains the stack.",
+        ),
+        th.Property(
+            "stack_name",
+            th.StringType,
+            description="The name of the stack.",
+        ),
+        th.Property(
+            "name",
+            th.StringType,
+            description="The name of the policy group.",
+        ),
+        th.Property(
+            "version",
+            th.IntegerType,
+            description="Version of the policy pack applied to this stack.",
+        ),
+        th.Property(
+            "versionTag",
+            th.StringType,
+            description="Version tag of the policy pack applied to this stack.",
+        ),
+        th.Property(
+            "displayName",
+            th.StringType,
+            description="Display name of the policy pack applied to this stack.",
+        ),
+        th.Property(
+            "packLocation",
+            th.StringType,
+            description="Location of the policy pack applied to this stack.",
+        ),
+        th.Property(
+            "config",
+            th.ObjectType(),
+            description="The configuration of the policy pack applied to this stack.",
+        ),
+
+    ).to_dict()
