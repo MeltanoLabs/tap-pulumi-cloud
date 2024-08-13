@@ -510,3 +510,59 @@ class OrganizationOidcIssuersPolicies(PulumiCloudStream):
     ).to_dict()
 
 
+class OrganizationAgentPools(_OrgPartitionedStream):
+    """Organization Agent Pools Stream."""
+
+    name = "organization_agent_pools"
+    path = "/api/orgs/{org_name}/agent-pools"
+    primary_keys = ["org_name", "id"]
+    records_jsonpath = "$.agentPools[*]"
+
+
+    schema = th.PropertiesList(
+    th.Property(
+        "org_name",
+        th.StringType,
+        description="The name of the Agent Pool organization.",
+        ),
+    th.Property(
+        "created",
+        th.IntegerType,
+        description="The timestamp when the Agent Pool was created, in milliseconds - epoch."
+    ),
+    th.Property(
+        "id",
+        th.StringType,
+        description="The unique identifier for the Agent Pool."
+    ),
+    th.Property(
+        "name",
+        th.StringType,
+        description="The Agent Pool name."
+    ),
+    th.Property(
+        "description",
+        th.StringType,
+        description="The Agent Pool description."
+    ),
+    th.Property(
+        "last_seen",
+        th.IntegerType,
+        description="The timestamp when the Agent Pool was seen for the last time, in milliseconds - epoch."
+    ),
+    th.Property(
+        "status",
+        th.StringType,
+        description="The current status of the Agent Pool."
+    ),
+    th.Property(
+        "last_deployment",
+        th.StringType,
+        description="The last deployment associated with the Agent Pool.",
+        required=False
+    )
+).to_dict()
+
+
+
+
