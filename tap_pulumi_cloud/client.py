@@ -60,7 +60,7 @@ class PulumiCloudStream(RESTStream):
         Returns:
             Mapping of URL query parameters.
         """
-        params: dict = {}
+        params: dict = {'pageSize': 100}
         if next_page_token:
             params["continuationToken"] = next_page_token
         return params

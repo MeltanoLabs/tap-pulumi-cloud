@@ -85,6 +85,7 @@ class TapPulumiCloud(Tap):
             stacks.StackPolicyGroups(tap=self),
             stacks.StackPolicyPacks(tap=self),
             stacks.StackPreviews(tap=self),
+            stacks.StackDeployments(tap=self),
             organizations.OrganizationMembers(tap=self),
             organizations.OrganizationTeams(tap=self),
             policies.PolicyGroupsList(tap=self),
