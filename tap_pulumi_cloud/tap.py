@@ -92,6 +92,7 @@ class TapPulumiCloud(Tap):
             organizations.OrganizationTeamsMembers(tap=self),
             organizations.OrganizationTeamsStacks(tap=self),
             organizations.OrganizationTeamsEnvironments(tap=self),
+            organizations.OrganizationTeamsAccessTokens(tap=self),
             policies.PolicyGroupsList(tap=self),
             policies.PolicyGroups(tap=self),
             policies.PolicyPacks(tap=self),

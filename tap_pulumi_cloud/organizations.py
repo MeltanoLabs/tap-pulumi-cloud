@@ -110,26 +110,32 @@ class OrganizationTeams(_OrgPartitionedStream):
         th.Property(
             "org_name",
             th.StringType,
+            description="The name of the organization that owns the team.",
         ),
         th.Property(
             "kind",
             th.StringType,
+            description="The kind of team.",
         ),
         th.Property(
             "name",
             th.StringType,
+            description="The name of the team.",
         ),
         th.Property(
             "display_name",
             th.StringType,
+            description="The display name of the team.",
         ),
         th.Property(
             "description",
             th.StringType,
+            description="The description of the team.",
         ),
         th.Property(
             "user_role",
             th.StringType,
+            description="The default user role of the team members.",
         ),
     ).to_dict()
 
@@ -154,12 +160,12 @@ class OrganizationTeams(_OrgPartitionedStream):
         }
 
 
-class OrganizationTeamsMembers(_OrgPartitionedStream):
+class OrganizationTeamsMembers(PulumiCloudStream):
     """Organization team members stream."""
 
     name = "organization_team_members"
     path = "/api/orgs/{org_name}/teams/{team_name}"
-    primary_keys = ["org_name", "team_name"]
+    primary_keys = ["org_name", "team_name", "github_login"]
     records_jsonpath = "$.members[*]"
 
     parent_stream_type = OrganizationTeams
@@ -197,12 +203,12 @@ class OrganizationTeamsMembers(_OrgPartitionedStream):
         ),
     ).to_dict()
 
-class OrganizationTeamsStacks(_OrgPartitionedStream):
+class OrganizationTeamsStacks(PulumiCloudStream):
     """Organization team stacks stream."""
 
     name = "organization_team_stacks"
     path = "/api/orgs/{org_name}/teams/{team_name}"
-    primary_keys = ["org_name", "team_name"]
+    primary_keys = ["org_name", "team_name", "project_name", "stack_name"]
     records_jsonpath = "$.stacks[*]"
 
     parent_stream_type = OrganizationTeams
@@ -235,12 +241,12 @@ class OrganizationTeamsStacks(_OrgPartitionedStream):
         ),
     ).to_dict()
 
-class OrganizationTeamsEnvironments(_OrgPartitionedStream):
+class OrganizationTeamsEnvironments(PulumiCloudStream):
     """Organization team environments stream."""
 
     name = "organization_team_environments"
     path = "/api/orgs/{org_name}/teams/{team_name}"
-    primary_keys = ["org_name", "team_name"]
+    primary_keys = ["org_name", "team_name", "env_name"]
     records_jsonpath = "$.environments[*]"
 
     parent_stream_type = OrganizationTeams
@@ -270,6 +276,54 @@ class OrganizationTeamsEnvironments(_OrgPartitionedStream):
             "permission",
             th.StringType,
             description="Permissions for the environment.",
+        ),
+    ).to_dict()
+
+class OrganizationTeamsAccessTokens(PulumiCloudStream):
+    """Organization team access tokens stream."""
+
+    name = "organization_team_access_tokens"
+    path = "/api/orgs/{org_name}/teams/{team_name}/tokens"
+    primary_keys = ["org_name", "team_name", "id"]
+    records_jsonpath = "$.tokens[*]"
+
+    parent_stream_type = OrganizationTeams
+
+    schema = th.PropertiesList(
+        th.Property(
+            "org_name",
+            th.StringType,
+            description="The name of the organization that owns the team.",
+        ),
+        th.Property(
+            "team_name",
+            th.StringType,
+            description="The name of the team.",
+        ),
+        th.Property(
+            "id",
+            th.StringType,
+            description="The ID of the token.",
+        ),
+        th.Property(
+            "description",
+            th.StringType,
+            description="The description of the token.",
+        ),
+        th.Property(
+            "expires",
+            th.IntegerType,
+            description="The expiration time of the token.",
+        ),
+        th.Property(
+            "last_used",
+            th.IntegerType,
+            description="The time the token was last used.",
+        ),
+        th.Property(
+            "name",
+            th.StringType,
+            description="The name of the token"
         ),
     ).to_dict()
 
