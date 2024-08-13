@@ -21,22 +21,22 @@ class Environments(_OrgPartitionedStream):
     th.Property(
         "project",
         th.StringType,
-        description="The project associated with this record."
+        description="The project associated with this environment."
     ),
     th.Property(
         "name",
         th.StringType,
-        description="The name of the resource."
+        description="The name of the environment."
     ),
     th.Property(
         "created",
         th.DateTimeType,
-        description="The timestamp when the resource was created."
+        description="The timestamp when the environment was created."
     ),
     th.Property(
         "modified",
         th.DateTimeType,
-        description="The timestamp when the resource was last modified."
+        description="The timestamp when the environment was last modified."
     ),
     th.Property(
         "tags",
@@ -46,7 +46,7 @@ class Environments(_OrgPartitionedStream):
                 th.StringType
             )
         ),
-        description="A dictionary of tags associated with the resource, allowing dynamic keys."
+        description="A dictionary of tags associated with the environment, allowing dynamic keys."
     )
 ).to_dict()
 
