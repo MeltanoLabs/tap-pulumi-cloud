@@ -155,6 +155,11 @@ class PolicyPacks(_OrgPartitionedStream):
 
     schema = th.PropertiesList(
     th.Property(
+        "org_name",
+        th.StringType,
+        description="The name of the organization.",
+    ),
+    th.Property(
         "name",
         th.StringType,
         description="The name of the policy pack.",
@@ -217,7 +222,12 @@ class LatestPolicyPacks(PulumiCloudStream):
 
     schema = th.PropertiesList(
     th.Property(
-        "name",
+        "org_name",
+        th.StringType,
+        description="The name of the organization.",
+    ),
+    th.Property(
+        "policy_pack_name",
         th.StringType,
         description="The name of the policy pack."
     ),
