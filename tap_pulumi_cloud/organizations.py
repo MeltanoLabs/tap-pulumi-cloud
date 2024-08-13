@@ -14,7 +14,7 @@ class OrganizationMembers(_OrgPartitionedStream):
 
     name = "organization_members"
     path = "/api/orgs/{org_name}/members"
-    primary_keys = ["org_name", "user_name"]
+    primary_keys = ["org_name", "user_github_login"]
     records_jsonpath = "$.members[*]"
 
     schema = th.PropertiesList(
@@ -29,25 +29,19 @@ class OrganizationMembers(_OrgPartitionedStream):
             description="The role of the user in the organization.",
         ),
         th.Property(
+            "user_github_login",
+            th.StringType,
+            description="The github login of the user.",
+        ),
+        th.Property(
             "user_name",
             th.StringType,
             description="The name of the user.",
         ),
         th.Property(
-            "user",
-            th.ObjectType(
-                th.Property(
-                    "github_login",
-                    th.StringType,
-                    description="The GitHub login of the user.",
-                ),
-                th.Property(
-                    "avatar_url",
-                    th.StringType,
-                    description="The URL of the user's avatar.",
-                ),
-            ),
-            description="The user object.",
+            "user_avatar_url",
+            th.StringType,
+            description="The name of the user.",
         ),
         th.Property(
             "created",
@@ -95,6 +89,8 @@ class OrganizationMembers(_OrgPartitionedStream):
         new_row = super().post_process(row, context)
         if new_row:
             new_row["user_name"] = new_row["user"].pop("name")
+            new_row["user_github_login"] = new_row["user"].pop("github_login")
+            new_row["user_avatar_url"] = new_row["user"].pop("avatar_url")
         return new_row
 
 
