@@ -366,6 +366,7 @@ class StackPreviews(StackUpdates):
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/updates/latest/previews"
     primary_keys = ["org_name", "project_name", "stack_name", "version"]
     records_jsonpath = "$.updates[*]"
+    tolerated_http_errors = [504]
 
     parent_stream_type = Stacks
 
