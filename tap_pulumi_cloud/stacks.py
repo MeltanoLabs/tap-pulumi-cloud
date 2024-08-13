@@ -570,3 +570,196 @@ class StackPolicyPacks(PulumiCloudStream):
         ),
 
     ).to_dict()
+
+class StackDeployments(PulumiCloudStream):
+    """Stack deployments stream."""
+
+    name = "stack_deployments"
+    path = "/api/stacks/{org_name}/{project_name}/{stack_name}/deployments"
+    primary_keys = ["org_name", "project_name", "stack_name", "id"]
+    records_jsonpath = "$.deployments[*]"
+
+    parent_stream_type = Stacks
+
+    schema = th.PropertiesList(
+        th.Property(
+            "org_name",
+            th.StringType,
+            description="The name of the organization that owns the stack.",
+        ),
+        th.Property(
+            "project_name",
+            th.StringType,
+            description="The name of the project that contains the stack.",
+        ),
+        th.Property(
+            "stack_name",
+            th.StringType,
+            description="The name of the stack.",
+        ),
+        th.Property(
+            "id",
+            th.StringType,
+            description="The ID of the deployment.",
+        ),
+        th.Property(
+            "created",
+            th.StringType,
+            description="The time the deployment was created.",
+        ),
+        th.Property(
+            "modified",
+            th.StringType,
+            description="The time the deployment was last modified.",
+        ),
+        th.Property(
+            "status",
+            th.StringType,
+            description="The status of the deployment.",
+        ),
+        th.Property(
+            "version",
+            th.IntegerType,
+            description="The version of the deployment.",
+        ),
+        th.Property(
+            "requested_by",
+            th.ObjectType(
+                th.Property(
+                    "name",
+                    th.StringType,
+                    description="The name of the requester.",
+                ),
+                th.Property(
+                    "github_login",
+                    th.StringType,
+                    description="The GitHub login of the requester.",
+                ),
+                th.Property(
+                    "avatar_url",
+                    th.StringType,
+                    description="The avatar URL of the requester.",
+                ),
+                th.Property(
+                    "email",
+                    th.StringType,
+                    description="The email of the requester.",
+                ),
+            ),
+            description="The information associated with the requester.",
+        ),
+        th.Property(
+            "paused",
+            th.BooleanType,
+            description="Is the deployment paused.",
+        ),
+        th.Property(
+            "pulumi_operation",
+            th.StringType,
+            description="The operation performed in the deployment.",
+        ),
+        th.Property(
+            "updates",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property(
+                        "id",
+                        th.StringType,
+                        description="The ID of the update.",
+                    ),
+                    th.Property(
+                        "version",
+                        th.IntegerType,
+                        description="The version of the update.",
+                    ),
+                    th.Property(
+                        "start_time",
+                        th.IntegerType,
+                        description="The time the update started.",
+                    ),
+                    th.Property(
+                        "end_time",
+                        th.IntegerType,
+                        description="The time the update ended.",
+                    ),
+                    th.Property(
+                        "result",
+                        th.StringType,
+                        description="The result of the update.",
+                    ),
+                    th.Property(
+                        "kind",
+                        th.StringType,
+                        description="The kind of update.",
+                    ),
+                    th.Property(
+                        "message",
+                        th.StringType,
+                        description="The message associated with the update.",
+                    ),
+                    th.Property(
+                        "environment",
+                        th.ObjectType(),
+                        description="The environment configuration present at the update.",
+                    ),
+                ),
+            ),
+            description="The updates associated with the deployment.",
+        ),
+        th.Property(
+            "jobs",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property(
+                        "status",
+                        th.StringType,
+                        description="The status of the job.",
+                    ),
+                    th.Property(
+                        "started",
+                        th.StringType,
+                        description="The time the job started.",
+                    ),
+                    th.Property(
+                        "last_updated",
+                        th.StringType,
+                        description="The time the job was last updated.",
+                    ),
+                    th.Property(
+                        "steps",
+                        th.ArrayType(
+                            th.ObjectType(
+                                th.Property(
+                                    "name",
+                                    th.StringType,
+                                    description="The name of the step.",
+                                ),
+                                th.Property(
+                                    "status",
+                                    th.StringType,
+                                    description="The status of the step.",
+                                ),
+                                th.Property(
+                                    "started",
+                                    th.StringType,
+                                    description="The time the step started.",
+                                ),
+                                th.Property(
+                                    "last_updated",
+                                    th.StringType,
+                                    description="The time the step was last updated.",
+                                ),
+                            ),
+                        ),
+                        description="The steps of the job.",
+                    ),
+                ),
+            ),
+            description="The jobs associated with the deployment.",
+        ),
+        th.Property(
+            "initiator",
+            th.StringType,
+            description="The initiator of the deployment.",
+        ),
+    ).to_dict()
