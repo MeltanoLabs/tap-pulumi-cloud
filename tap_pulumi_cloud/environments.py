@@ -19,6 +19,10 @@ class Environments(_OrgPartitionedStream):
 
     schema = th.PropertiesList(
     th.Property(
+        "org_name",
+        th.StringType,
+        ),
+    th.Property(
         "project",
         th.StringType,
         description="The project associated with this environment."

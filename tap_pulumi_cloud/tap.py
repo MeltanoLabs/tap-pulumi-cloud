@@ -8,7 +8,7 @@ import requests_cache
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
-from tap_pulumi_cloud import organizations, stacks, policies, environments
+from tap_pulumi_cloud import organizations, stacks, policies, environments, rum
 
 
 class TapPulumiCloud(Tap):
@@ -78,25 +78,28 @@ class TapPulumiCloud(Tap):
             A list of Pulumi Cloud streams.
         """
         return [
-            stacks.Stacks(tap=self),
-            stacks.StackDetails(tap=self),
-            stacks.StackUpdates(tap=self),
-            stacks.StackResources(tap=self),
-            stacks.StackPolicyGroups(tap=self),
-            stacks.StackPolicyPacks(tap=self),
-            stacks.StackPreviews(tap=self),
-            stacks.StackDeployments(tap=self),
-            organizations.OrganizationMembers(tap=self),
-            organizations.OrganizationTeams(tap=self),
-            organizations.OrganizationAccessTokens(tap=self),
-            organizations.OrganizationTeamsMembers(tap=self),
-            organizations.OrganizationTeamsStacks(tap=self),
-            organizations.OrganizationTeamsEnvironments(tap=self),
-            organizations.OrganizationTeamsAccessTokens(tap=self),
-            policies.PolicyGroupsList(tap=self),
-            policies.PolicyGroups(tap=self),
-            policies.PolicyPacks(tap=self),
-            policies.LatestPolicyPacks(tap=self),
-            environments.Environments(tap=self),
+            # stacks.Stacks(tap=self),
+            # stacks.StackDetails(tap=self),
+            # stacks.StackUpdates(tap=self),
+            # stacks.StackResources(tap=self),
+            # stacks.StackPolicyGroups(tap=self),
+            # stacks.StackPolicyPacks(tap=self),
+            # stacks.StackPreviews(tap=self),
+            # stacks.StackDeployments(tap=self),
+            # organizations.OrganizationMembers(tap=self),
+            # organizations.OrganizationTeams(tap=self),
+            # organizations.OrganizationAccessTokens(tap=self),
+            # organizations.OrganizationTeamsMembers(tap=self),
+            # organizations.OrganizationTeamsStacks(tap=self),
+            # organizations.OrganizationTeamsEnvironments(tap=self),
+            # organizations.OrganizationTeamsAccessTokens(tap=self),
+            # organizations.OrganizationOidcIssuers(tap=self),
+            # organizations.OrganizationOidcIssuersPolicies(tap=self),
+            # policies.PolicyGroupsList(tap=self),
+            # policies.PolicyGroups(tap=self),
+            # policies.PolicyPacks(tap=self),
+            # policies.LatestPolicyPacks(tap=self),
+             rum.RumUsageDaily(tap=self),
+             environments.Environments(tap=self),
             
         ]

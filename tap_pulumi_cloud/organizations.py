@@ -368,3 +368,145 @@ class OrganizationAccessTokens(_OrgPartitionedStream):
         ),
     ).to_dict()
 
+class OrganizationOidcIssuers(_OrgPartitionedStream):
+    """Organization OIDC issuers stream."""
+
+    name = "organization_oidc_issuers"
+    path = "/api/orgs/{org_name}/oidc/issuers"
+    primary_keys = ["org_name", "id"]
+    records_jsonpath = "$.oidcIssuers[*]"
+
+    schema = th.PropertiesList(
+    th.Property(
+        "org_name",
+        th.StringType,
+        ),
+    th.Property(
+        "id",
+        th.StringType,
+        description="The unique identifier for the Issuer."
+    ),
+    th.Property(
+        "name",
+        th.StringType,
+        description="The name of the Issuer."
+    ),
+    th.Property(
+        "url",
+        th.StringType,
+        description="The issuer URL."
+    ),
+    th.Property(
+        "issuer",
+        th.StringType,
+        description="The issuer URL"
+    ),
+    th.Property(
+        "created",
+        th.DateTimeType,
+        description="The timestamp when the Issuer was created."
+    ),
+    th.Property(
+        "modified",
+        th.DateTimeType,
+        description="The timestamp when the Issuer was last modified."
+    )
+).to_dict()
+    
+    def get_child_context(
+        self,
+        record: dict,
+        context: dict | None,  # noqa: ARG002
+    ) -> dict | None:
+        """Return a context object for child streams.
+
+        Args:
+            record: A record from this stream.
+            context: The stream sync context.
+
+        Returns:
+            A context object for child streams.
+        """
+        return {
+            "org_name": record["org_name"],
+            "issuer_id": record["id"],
+        }
+
+class OrganizationOidcIssuersPolicies(PulumiCloudStream):
+    """OIDC Issuer Policy details Stream."""
+
+    name = "organization_oidc_issuers_policies"
+    path = "/api/orgs/{org_name}/auth/policies/oidcissuers/{issuer_id}"
+    primary_keys = ["org_name", "issuer_id", "id"]
+    parent_stream_type = OrganizationOidcIssuers
+
+
+
+    schema = th.PropertiesList(
+        th.Property(
+            "org_name",
+            th.StringType,
+        ),
+        th.Property(
+            "issuer_id",
+            th.StringType,
+            description="The unique identifier for the OIDC Issuer."
+        ),
+        th.Property(
+            "id",
+            th.StringType,
+            description="The unique identifier for the policy."
+        ),
+        th.Property(
+            "version",
+            th.IntegerType,
+            description="The version number of the policy."
+        ),
+        th.Property(
+            "created",
+            th.DateTimeType,
+            description="The timestamp when the policy was created."
+        ),
+        th.Property(
+            "modified",
+            th.DateTimeType,
+            description="The timestamp when the policy was last modified."
+        ),
+        th.Property(
+            "policies",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property(
+                        "decision",
+                        th.StringType,
+                        description="The decision made by the policy, e.g., 'allow' or 'deny'."
+                    ),
+                    th.Property(
+                        "tokenType",
+                        th.StringType,
+                        description="The type of token associated with the policy."
+                    ),
+                    th.Property(
+                        "authorizedPermissions",
+                        th.ArrayType(
+                            th.StringType
+                        ),
+                    description="The permissions authorized by the policy."
+                ),
+                    th.Property(
+                        "rules",
+                        th.ObjectType(
+                            th.Property(
+                                "*",  # Wildcard to allow for any key in the rules object
+                                th.StringType
+                            )
+                        ),
+                        description="Dynamic set of rules applied by the policy."
+                    )
+                )
+            ),
+            description="List of policies within the OIDC Issuer."
+        )
+    ).to_dict()
+
+
