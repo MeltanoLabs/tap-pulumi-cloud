@@ -159,17 +159,30 @@ class StackUpdates(PulumiCloudStream):
 
     parent_stream_type = Stacks
 
+
+    def get_url_params(
+        self,
+        context: dict | None,
+        next_page_token: str | None,
+    ) -> dict[str, t.Any]:
+        """Get URL query parameters.
+
+        Args:
+            context: Stream sync context.
+            next_page_token: Next offset.
+
+        Returns:
+            A dictionary of URL query parameters.
+        """
+        params = super().get_url_params(context, next_page_token)
+
+        if context:
+            params["output-type"] = 'service'
+
+        return params
+
     schema = th.PropertiesList(
-        th.Property(
-            "version",
-            th.IntegerType,
-            description="The ID of the update.",
-        ),
-        th.Property(
-            "update_id",
-            th.IntegerType,
-            description="The internal ID of the update.",
-        ),
+
         th.Property(
             "org_name",
             th.StringType,
@@ -186,44 +199,177 @@ class StackUpdates(PulumiCloudStream):
             description="The name of the stack.",
         ),
         th.Property(
-            "start_time",
-            th.IntegerType,
-            description="The time the update started.",
+            "info",
+            th.ObjectType(
+                th.Property(
+                    "kind",
+                    th.StringType,
+                    description="The kind of update.",
+                ),
+                th.Property(
+                    "start_time",
+                    th.IntegerType,
+                    description="The time the update started.",
+                ),
+                th.Property(
+                    "message",
+                    th.StringType,
+                    description="The message associated with the update.",
+                ),
+                th.Property(
+                    "environment",
+                    th.ObjectType(),
+                    description="The environment configuration present at the update.",
+                ),
+                th.Property(
+                    "config",
+                    th.ObjectType(),
+                    description="The config associated with the update.",
+                ),
+                th.Property(
+                    "result",
+                    th.StringType,
+                    description="The result of the update.",
+                ),
+                th.Property(
+                    "end_time",
+                    th.IntegerType,
+                    description="The time the update ended.",
+                ),
+                th.Property(
+                    "resource_changes",
+                    th.ObjectType(),
+                    description="The resource changes associated with the update.",
+                ),
+            ),
+            description="The information associated with the update.",
         ),
-        th.Property(
-            "end_time",
-            th.IntegerType,
-            description="The time the update ended.",
-        ),
-        th.Property(
-            "kind",
-            th.StringType,
-            description="The kind of update.",
-        ),
-        th.Property(
-            "message",
-            th.StringType,
-            description="The message associated with the update.",
-        ),
-        th.Property(
-            "environment",
-            th.ObjectType(),
-            description="The environment associated with the update.",
-        ),
-        th.Property(
-            "config",
-            th.ObjectType(),
-            description="The config associated with the update.",
-        ),
-        th.Property(
-            "result",
-            th.StringType,
-            description="The result of the update.",
-        ),
-        th.Property("resource_changes", th.ObjectType()),
-        th.Property("resource_count", th.IntegerType),
 
+        th.Property(
+            "update_id",
+            th.StringType,
+            description="The ID of the update.",
+        ),
+        th.Property(
+            "github_commit_info",
+            th.ObjectType(
+                th.Property(
+                    "slug",
+                    th.StringType,
+                    description="The slug of the commit.",
+                ),
+                th.Property(
+                    "sha",
+                    th.StringType,
+                    description="The SHA of the commit.",
+                ),
+                th.Property(
+                    "url",
+                    th.StringType,
+                    description="The URL of the commit.",
+                ),
+                th.Property(
+                    "author",
+                    th.ObjectType(
+                        th.Property(
+                            "name",
+                            th.StringType,
+                            description="The name of the author.",
+                        ),
+                        th.Property(
+                            "github_login",
+                            th.StringType,
+                            description="The GitHub login of the author.",
+                        ),
+                        th.Property(
+                            "avatar_url",
+                            th.StringType,
+                            description="The avatar URL of the author.",
+                        ),
+                    ),
+                    description="The information associated with the author of the commit.",
+                ),
+            ),
+            description="The information associated with the GitHub commit.",
+        ),
+        th.Property(
+            "version",
+            th.IntegerType,
+            description="The numeric sequence of the update.",
+        ),
+        th.Property(
+            "latest_version",
+            th.IntegerType,
+            description="The latest version for this stack.",
+        ),
+        th.Property(
+            "requested_by",
+            th.ObjectType(
+                th.Property(
+                    "name",
+                    th.StringType,
+                    description="The name of the requester.",
+                ),
+                th.Property(
+                    "github_login",
+                    th.StringType,
+                    description="The GitHub login of the requester.",
+                ),
+                th.Property(
+                    "avatar_url",
+                    th.StringType,
+                    description="The avatar URL of the requester.",
+                ),
+            ),
+            description="The information associated with the requester.",
+        ),
+        th.Property(
+            "policy_packs",
+            th.ArrayType(
+                th.ObjectType(
+                    th.Property(
+                        "name",
+                        th.StringType,
+                        description="The name of the policy pack.",
+                    ),
+                    th.Property(
+                        "display_name",
+                        th.StringType,
+                        description="The display name of the policy pack.",
+                    ),
+                    th.Property(
+                        "version",
+                        th.IntegerType,
+                        description="The version of the policy pack.",
+                    ),
+                    th.Property(
+                        "version_tag",
+                        th.StringType,
+                        description="The version tag of the policy pack.",
+                    ),
+                    th.Property(
+                        "config",
+                        th.ObjectType(),
+                        description="The configuration of the policy pack.",
+                    ),
+                ),
+            ),
+            description="The policy packs associated with the update.",
+        ),
     ).to_dict()
+
+    
+class StackPreviews(StackUpdates):
+    """Stack previews stream."""
+
+    name = "stack_previews"
+    path = "/api/stacks/{org_name}/{project_name}/{stack_name}/updates/latest/previews"
+    primary_keys = ["org_name", "project_name", "stack_name", "version"]
+    records_jsonpath = "$.updates[*]"
+
+    parent_stream_type = Stacks
+
+    ## Schema same as StackUpdates, inherited
 
 
 class StackResources(PulumiCloudStream):
