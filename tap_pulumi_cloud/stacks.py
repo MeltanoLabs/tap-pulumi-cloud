@@ -764,3 +764,191 @@ class StackDeployments(PulumiCloudStream):
             description="The initiator of the deployment.",
         ),
     ).to_dict()
+
+
+class StackSchedules(PulumiCloudStream):
+    """Stack schedules stream."""
+
+    name = "stack_schedules"
+    path = "/api/stacks/{org_name}/{project_name}/{stack_name}/deployments/schedules"
+    primary_keys = ["org_name", "project_name", "stack_name"]
+    parent_stream_type = Stacks
+    records_jsonpath = "$.schedules[*]"
+
+    schema = th.PropertiesList(
+        th.Property(
+            "org_name",
+            th.StringType,
+            description="The name of the organization that owns the stack.",
+        ),
+        th.Property(
+            "project_name",
+            th.StringType,
+            description="The name of the project that contains the stack.",
+        ),
+        th.Property(
+            "stack_name",
+            th.StringType,
+            description="The name of the stack.",
+        ),
+        th.Property(
+            "id",
+            th.StringType,
+            description="The unique identifier for the scheduled task."
+        ),
+        th.Property(
+            "org_id",
+            th.StringType,
+            description="The organization ID associated with the task."
+        ),
+        th.Property(
+            "schedule_cron",
+            th.StringType,
+            description="The cron expression defining the schedule for the task."
+        ),
+        th.Property(
+            "next_execution",
+            th.DateTimeType,
+            description="The timestamp for the next scheduled execution."
+        ),
+        th.Property(
+            "paused",
+            th.BooleanType,
+            description="Indicates whether the task is paused."
+        ),
+        th.Property(
+            "kind",
+            th.StringType,
+            description="The kind of task, e.g., 'deployment'."
+        ),
+        th.Property(
+            "definition",
+            th.ObjectType(
+                th.Property(
+                    "programID",
+                    th.StringType,
+                    description="The ID of the program associated with the task."
+                ),
+                th.Property(
+                    "request",
+                    th.ObjectType(
+                        th.Property(
+                            "inheritSettings",
+                            th.BooleanType,
+                            description="Indicates whether to inherit settings from the program."
+                        ),
+                        th.Property(
+                            "operation",
+                            th.StringType,
+                            description="The operation to be performed, e.g., 'detect-drift'."
+                        ),
+                        th.Property(
+                            "operationContext",
+                            th.ObjectType(
+                                th.Property(
+                                    "*",  # Wildcard to allow for any key in the operationContext object
+                                    th.ObjectType(
+                                        th.Property(
+                                            "*",  # Wildcard to allow for any key inside options
+                                            th.StringType
+                                        )
+                                    )
+                                )
+                            ),
+                        )
+                    )
+                )
+            ),
+            description="Definition of the scheduled."
+        ),
+        th.Property(
+            "created",
+            th.DateTimeType,
+            description="The timestamp when the task was created."
+        ),
+        th.Property(
+            "modified",
+            th.DateTimeType,
+            description="The timestamp when the task was last modified."
+        ),
+        th.Property(
+            "lastExecuted",
+            th.DateTimeType,
+            description="The timestamp when the task was last executed."
+        )
+    ).to_dict()
+
+    def get_child_context(
+        self,
+        record: dict,
+        context: dict | None,  # noqa: ARG002
+    ) -> dict | None:
+        """Return a context object for child streams.
+
+        Args:
+            record: A record from this stream.
+            context: The stream sync context.
+
+        Returns:
+            A context object for child streams.
+        """
+        return {
+            "org_name": record["org_name"],
+            "project_name": record["project_name"],
+            "stack_name": record["stack_name"],
+            "scheduled_action_id": record["id"],
+        }
+    
+class StackScheduledDeploymentHistory(PulumiCloudStream):
+    """Stack schedules deployment history stream."""
+
+    name = "stack_schedules_deployment_history"
+    path = "/api/stacks/{org_name}/{project_name}/{stack_name}/deployments/schedules/{scheduled_action_id}/history"
+    primary_keys = ["org_name", "project_name", "stack_name", "id"]
+    parent_stream_type = StackSchedules
+    records_jsonpath = "$.scheduleHistoryEvents[*]"
+
+    schema = th.PropertiesList(
+        th.Property(
+            "id",
+            th.StringType,
+            description="The unique identifier for the execution record."
+        ),
+        th.Property(
+            "scheduled_action_id",
+            th.StringType,
+            description="The ID of the scheduled action associated with this execution."
+        ),
+        th.Property(
+            "executed",
+            th.DateTimeType,
+            description="The timestamp when the scheduled action was executed."
+        ),
+        th.Property(
+            "version",
+            th.IntegerType,
+            description="The version number of the execution."
+        ),
+        th.Property(
+            "result",
+            th.StringType,
+            description="The result of the execution."
+        ),
+        th.Property(
+            "org_name",
+            th.StringType,
+            description="The name of the organization that owns the stack.",
+        ),
+        th.Property(
+            "project_name",
+            th.StringType,
+            description="The name of the project that contains the stack.",
+        ),
+        th.Property(
+            "stack_name",
+            th.StringType,
+            description="The name of the stack."
+    )
+    ).to_dict()
+
+
