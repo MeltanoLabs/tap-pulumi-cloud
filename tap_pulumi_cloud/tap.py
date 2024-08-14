@@ -41,6 +41,7 @@ class TapPulumiCloud(Tap):
             "start_date",
             th.DateTimeType,
             description="Earliest datetime to get data from",
+            required=True,
         ),
         th.Property(
             "requests_cache",
