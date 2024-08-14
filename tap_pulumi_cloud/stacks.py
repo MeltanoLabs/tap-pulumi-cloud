@@ -14,7 +14,7 @@ class Stacks(_OrgPartitionedStream):
 
     name = "stacks"
     path = "/api/user/stacks"
-    primary_keys = ["org_name", "project_name", "stack_name"]
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name"]
     records_jsonpath = "$.stacks[*]"
 
     schema = th.PropertiesList(
@@ -86,12 +86,13 @@ class Stacks(_OrgPartitionedStream):
             "stack_name": record["stack_name"],
         }
 
+
 class StackDetails(PulumiCloudStream):
     """Stack details stream."""
 
     name = "stack_details"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}"
-    primary_keys = ["org_name", "project_name", "stack_name"]
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name"]
     parent_stream_type = Stacks
 
     schema = th.PropertiesList(
@@ -145,20 +146,24 @@ class StackDetails(PulumiCloudStream):
             "version",
             th.IntegerType,
             description="The ID of the update.",
-        )
+        ),
     ).to_dict()
-    
+
 
 class StackUpdates(PulumiCloudStream):
     """Stack updates stream."""
 
     name = "stack_updates"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/updates"
-    primary_keys = ["org_name", "project_name", "stack_name", "version"]
+    primary_keys: t.Sequence[str] = [
+        "org_name",
+        "project_name",
+        "stack_name",
+        "version",
+    ]
     records_jsonpath = "$.updates[*]"
 
     parent_stream_type = Stacks
-
 
     def get_url_params(
         self,
@@ -177,12 +182,11 @@ class StackUpdates(PulumiCloudStream):
         params = super().get_url_params(context, next_page_token)
 
         if context:
-            params["output-type"] = 'service'
+            params["output-type"] = "service"
 
         return params
 
     schema = th.PropertiesList(
-
         th.Property(
             "org_name",
             th.StringType,
@@ -244,7 +248,6 @@ class StackUpdates(PulumiCloudStream):
             ),
             description="The information associated with the update.",
         ),
-
         th.Property(
             "update_id",
             th.StringType,
@@ -287,7 +290,9 @@ class StackUpdates(PulumiCloudStream):
                             description="The avatar URL of the author.",
                         ),
                     ),
-                    description="The information associated with the author of the commit.",
+                    description=(
+                        "The information associated " "with the author of the commit."
+                    ),
                 ),
             ),
             description="The information associated with the GitHub commit.",
@@ -358,19 +363,24 @@ class StackUpdates(PulumiCloudStream):
         ),
     ).to_dict()
 
-    
+
 class StackPreviews(StackUpdates):
     """Stack previews stream."""
 
     name = "stack_previews"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/updates/latest/previews"
-    primary_keys = ["org_name", "project_name", "stack_name", "version"]
+    primary_keys: t.Sequence[str] = [
+        "org_name",
+        "project_name",
+        "stack_name",
+        "version",
+    ]
     records_jsonpath = "$.updates[*]"
-    tolerated_http_errors = [504]
+    tolerated_http_errors: t.Sequence[int] = [504]
 
     parent_stream_type = Stacks
 
-    ## Schema same as StackUpdates, inherited
+    # Schema same as StackUpdates, inherited
 
 
 class StackResources(PulumiCloudStream):
@@ -378,7 +388,7 @@ class StackResources(PulumiCloudStream):
 
     name = "stack_resources"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/export"
-    primary_keys = ["org_name", "project_name", "stack_name", "urn"]
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name", "urn"]
     records_jsonpath = "$.deployment.resources[*]"
 
     parent_stream_type = Stacks
@@ -417,7 +427,11 @@ class StackResources(PulumiCloudStream):
         th.Property(
             "custom",
             th.BooleanType,
-            description="Is it a custom resource?; a cloud resource managed by a resource provider such as AWS, Microsoft Azure, Google Cloud or Kubernetes.",
+            description=(
+                "Is it a custom resource?; a cloud resource "
+                "managed by a resource provider such as AWS,"
+                "Microsoft Azure, Google Cloud or Kubernetes."
+            ),
         ),
         th.Property(
             "created",
@@ -453,7 +467,7 @@ class StackResources(PulumiCloudStream):
             "parent",
             th.StringType,
             description="Parent resource of this resource.",
-        ),        
+        ),
         th.Property(
             "property_dependencies",
             th.ObjectType(),
@@ -462,13 +476,12 @@ class StackResources(PulumiCloudStream):
     ).to_dict()
 
 
-
 class StackPolicyGroups(PulumiCloudStream):
     """Stack policy groups stream."""
 
     name = "stack_policy_groups"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/policygroups"
-    primary_keys = ["org_name", "project_name", "stack_name", "name"]
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name", "name"]
     records_jsonpath = "$.policyGroups[*]"
 
     parent_stream_type = Stacks
@@ -509,7 +522,6 @@ class StackPolicyGroups(PulumiCloudStream):
             th.IntegerType,
             description="The number of policy packs enabled in the policy group.",
         ),
-
     ).to_dict()
 
 
@@ -518,7 +530,7 @@ class StackPolicyPacks(PulumiCloudStream):
 
     name = "stack_policy_packs"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/policypacks"
-    primary_keys = ["org_name", "project_name", "stack_name", "name"]
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name", "name"]
     records_jsonpath = "$.requiredPolicies[*]"
 
     parent_stream_type = Stacks
@@ -569,15 +581,15 @@ class StackPolicyPacks(PulumiCloudStream):
             th.ObjectType(),
             description="The configuration of the policy pack applied to this stack.",
         ),
-
     ).to_dict()
+
 
 class StackDeployments(PulumiCloudStream):
     """Stack deployments stream."""
 
     name = "stack_deployments"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/deployments"
-    primary_keys = ["org_name", "project_name", "stack_name", "id"]
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name", "id"]
     records_jsonpath = "$.deployments[*]"
 
     parent_stream_type = Stacks
@@ -701,7 +713,9 @@ class StackDeployments(PulumiCloudStream):
                     th.Property(
                         "environment",
                         th.ObjectType(),
-                        description="The environment configuration present at the update.",
+                        description=(
+                            "The environment configuration " "present at the update."
+                        ),
                     ),
                 ),
             ),
@@ -771,7 +785,7 @@ class StackSchedules(PulumiCloudStream):
 
     name = "stack_schedules"
     path = "/api/stacks/{org_name}/{project_name}/{stack_name}/deployments/schedules"
-    primary_keys = ["org_name", "project_name", "stack_name"]
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name"]
     parent_stream_type = Stacks
     records_jsonpath = "$.schedules[*]"
 
@@ -794,32 +808,30 @@ class StackSchedules(PulumiCloudStream):
         th.Property(
             "id",
             th.StringType,
-            description="The unique identifier for the scheduled task."
+            description="The unique identifier for the scheduled task.",
         ),
         th.Property(
             "org_id",
             th.StringType,
-            description="The organization ID associated with the task."
+            description="The organization ID associated with the task.",
         ),
         th.Property(
             "schedule_cron",
             th.StringType,
-            description="The cron expression defining the schedule for the task."
+            description="The cron expression defining the schedule for the task.",
         ),
         th.Property(
             "next_execution",
             th.DateTimeType,
-            description="The timestamp for the next scheduled execution."
+            description="The timestamp for the next scheduled execution.",
         ),
         th.Property(
             "paused",
             th.BooleanType,
-            description="Indicates whether the task is paused."
+            description="Indicates whether the task is paused.",
         ),
         th.Property(
-            "kind",
-            th.StringType,
-            description="The kind of task, e.g., 'deployment'."
+            "kind", th.StringType, description="The kind of task, e.g., 'deployment'."
         ),
         th.Property(
             "definition",
@@ -827,7 +839,7 @@ class StackSchedules(PulumiCloudStream):
                 th.Property(
                     "programID",
                     th.StringType,
-                    description="The ID of the program associated with the task."
+                    description="The ID of the program associated with the task.",
                 ),
                 th.Property(
                     "request",
@@ -835,47 +847,53 @@ class StackSchedules(PulumiCloudStream):
                         th.Property(
                             "inheritSettings",
                             th.BooleanType,
-                            description="Indicates whether to inherit settings from the program."
+                            description=(
+                                "Indicates whether to inherit "
+                                "settings from the program."
+                            ),
                         ),
                         th.Property(
                             "operation",
                             th.StringType,
-                            description="The operation to be performed, e.g., 'detect-drift'."
+                            description=(
+                                "The operation to be performed, "
+                                "e.g., 'detect-drift'."
+                            ),
                         ),
                         th.Property(
                             "operationContext",
                             th.ObjectType(
                                 th.Property(
-                                    "*",  # Wildcard to allow for any key in the operationContext object
+                                    "*",  # Wildcard to allow for any key
                                     th.ObjectType(
                                         th.Property(
-                                            "*",  # Wildcard to allow for any key inside options
-                                            th.StringType
+                                            "*",  # Wildcard to allow for any key
+                                            th.StringType,
                                         )
-                                    )
+                                    ),
                                 )
                             ),
-                        )
-                    )
-                )
+                        ),
+                    ),
+                ),
             ),
-            description="Definition of the scheduled."
+            description="Definition of the scheduled.",
         ),
         th.Property(
             "created",
             th.DateTimeType,
-            description="The timestamp when the task was created."
+            description="The timestamp when the task was created.",
         ),
         th.Property(
             "modified",
             th.DateTimeType,
-            description="The timestamp when the task was last modified."
+            description="The timestamp when the task was last modified.",
         ),
         th.Property(
             "lastExecuted",
             th.DateTimeType,
-            description="The timestamp when the task was last executed."
-        )
+            description="The timestamp when the task was last executed.",
+        ),
     ).to_dict()
 
     def get_child_context(
@@ -898,13 +916,17 @@ class StackSchedules(PulumiCloudStream):
             "stack_name": record["stack_name"],
             "scheduled_action_id": record["id"],
         }
-    
+
+
 class StackScheduledDeploymentHistory(PulumiCloudStream):
     """Stack schedules deployment history stream."""
 
     name = "stack_schedules_deployment_history"
-    path = "/api/stacks/{org_name}/{project_name}/{stack_name}/deployments/schedules/{scheduled_action_id}/history"
-    primary_keys = ["org_name", "project_name", "stack_name", "id"]
+    path = (
+        "/a(pi/stacks/{org_name}/{project_name}/{stack_name}"
+        "/deployments/schedules/{scheduled_action_id}/history)"
+    )
+    primary_keys: t.Sequence[str] = ["org_name", "project_name", "stack_name", "id"]
     parent_stream_type = StackSchedules
     records_jsonpath = "$.scheduleHistoryEvents[*]"
 
@@ -912,27 +934,27 @@ class StackScheduledDeploymentHistory(PulumiCloudStream):
         th.Property(
             "id",
             th.StringType,
-            description="The unique identifier for the execution record."
+            description="The unique identifier for the execution record.",
         ),
         th.Property(
             "scheduled_action_id",
             th.StringType,
-            description="The ID of the scheduled action associated with this execution."
+            description=(
+                "The ID of the scheduled action " "associated with this execution."
+            ),
         ),
         th.Property(
             "executed",
             th.DateTimeType,
-            description="The timestamp when the scheduled action was executed."
+            description="The timestamp when the scheduled action was executed.",
         ),
         th.Property(
             "version",
             th.IntegerType,
-            description="The version number of the execution."
+            description="The version number of the execution.",
         ),
         th.Property(
-            "result",
-            th.StringType,
-            description="The result of the execution."
+            "result", th.StringType, description="The result of the execution."
         ),
         th.Property(
             "org_name",
@@ -944,11 +966,5 @@ class StackScheduledDeploymentHistory(PulumiCloudStream):
             th.StringType,
             description="The name of the project that contains the stack.",
         ),
-        th.Property(
-            "stack_name",
-            th.StringType,
-            description="The name of the stack."
-    )
+        th.Property("stack_name", th.StringType, description="The name of the stack."),
     ).to_dict()
-
-

@@ -6,7 +6,7 @@ import typing as t
 
 from singer_sdk import typing as th
 
-from tap_pulumi_cloud.client import PulumiCloudStream, _OrgPartitionedStream
+from tap_pulumi_cloud.client import _OrgPartitionedStream
 
 
 class Environments(_OrgPartitionedStream):
@@ -14,46 +14,41 @@ class Environments(_OrgPartitionedStream):
 
     name = "environments"
     path = "/api/preview/environments/{org_name}"
-    primary_keys = ["org_name", "name"]
+    primary_keys: t.Sequence[str] = ["org_name", "name"]
     records_jsonpath = "$.environments[*]"
 
     schema = th.PropertiesList(
-    th.Property(
-        "org_name",
-        th.StringType,
+        th.Property(
+            "org_name",
+            th.StringType,
         ),
-    th.Property(
-        "project",
-        th.StringType,
-        description="The project associated with this environment."
-    ),
-    th.Property(
-        "name",
-        th.StringType,
-        description="The name of the environment."
-    ),
-    th.Property(
-        "created",
-        th.DateTimeType,
-        description="The timestamp when the environment was created."
-    ),
-    th.Property(
-        "modified",
-        th.DateTimeType,
-        description="The timestamp when the environment was last modified."
-    ),
-    th.Property(
-        "tags",
-        th.ObjectType(
-            th.Property(
-                "*",  # Wildcard to allow for any key in the tags object
-                th.StringType
-            )
+        th.Property(
+            "project",
+            th.StringType,
+            description="The project associated with this environment.",
         ),
-        description="A dictionary of tags associated with the environment, allowing dynamic keys."
-    )
-).to_dict()
-
+        th.Property("name", th.StringType, description="The name of the environment."),
+        th.Property(
+            "created",
+            th.DateTimeType,
+            description="The timestamp when the environment was created.",
+        ),
+        th.Property(
+            "modified",
+            th.DateTimeType,
+            description="The timestamp when the environment was last modified.",
+        ),
+        th.Property(
+            "tags",
+            th.ObjectType(
+                th.Property(
+                    "*",  # Wildcard to allow for any key in the tags object
+                    th.StringType,
+                )
+            ),
+            description="A dictionary of tags associated with the environment.",
+        ),
+    ).to_dict()
 
     def get_child_context(
         self,
@@ -72,7 +67,4 @@ class Environments(_OrgPartitionedStream):
         return {
             "environment_name": record["name"],
             "org_name": record["org_name"],
-        
         }
-
-

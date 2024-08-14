@@ -1,21 +1,20 @@
 """Stream type classes for tap-pulumi-cloud."""
+
 from __future__ import annotations
 
 import typing as t
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
-from datetime import datetime
-from requests import Response
-from singer_sdk import typing as th
-
-
-from tap_pulumi_cloud.client import PulumiCloudStream, _OrgPartitionedStream
-from singer_sdk.pagination import (
-    BaseAPIPaginator
-)
-
-from singer_sdk.helpers.jsonpath import extract_jsonpath
-from singer_sdk.helpers.types import Context
+if TYPE_CHECKING:
+    from requests import Response
+    from singer_sdk.helpers.types import Context
 from singer_sdk import metrics
+from singer_sdk import typing as th
+from singer_sdk.helpers.jsonpath import extract_jsonpath
+from singer_sdk.pagination import BaseAPIPaginator
+
+from tap_pulumi_cloud.client import _OrgPartitionedStream
 
 
 class AuditLogsPaginator(BaseAPIPaginator[t.Optional[str]]):
@@ -32,6 +31,7 @@ class AuditLogsPaginator(BaseAPIPaginator[t.Optional[str]]):
 
         Args:
             jsonpath: A JSONPath expression.
+            since: Start date for the audit logs.
             args: Paginator positional arguments for base class.
             kwargs: Paginator keyword arguments for base class.
         """
@@ -54,96 +54,92 @@ class AuditLogsPaginator(BaseAPIPaginator[t.Optional[str]]):
             return None
         return matched
 
+
 class AuditLogs(_OrgPartitionedStream):
     """Stream Audit Logs."""
 
     name = "audit_logs"
     path = "/api/orgs/{org_name}/auditlogs"
-    primary_keys = ["org_name", "timestamp", "event", "description"]
+    primary_keys: t.Sequence[str] = ["org_name", "timestamp", "event", "description"]
     records_jsonpath = "$.auditLogEvents[*]"
     replication_key = "timestamp"
     is_sorted = False
 
     schema = th.PropertiesList(
         th.Property(
-            "org_name",
-            th.StringType,
-            description="The name of the organization."
+            "org_name", th.StringType, description="The name of the organization."
         ),
         th.Property(
             "timestamp",
             th.DateTimeType,
-            description="The timestamp of the audit log event."
+            description="The timestamp of the audit log event.",
         ),
         th.Property(
             "source_ip",
             th.StringType,
-            description="The source IP of the audit log event."
+            description="The source IP of the audit log event.",
         ),
         th.Property(
-            "event",
-            th.StringType,
-            description="The event of the audit log event."
+            "event", th.StringType, description="The event of the audit log event."
         ),
         th.Property(
             "description",
             th.StringType,
-            description="The description of the audit log event."
+            description="The description of the audit log event.",
         ),
         th.Property(
             "user",
             th.ObjectType(
-                th.Property(
-                    "name",
-                    th.StringType,
-                    description="The name of the user."
-                ),
+                th.Property("name", th.StringType, description="The name of the user."),
                 th.Property(
                     "github_login",
                     th.StringType,
-                    description="The GitHub login of the user."
+                    description="The GitHub login of the user.",
                 ),
                 th.Property(
                     "avatar_url",
                     th.StringType,
-                    description="The avatar URL of the user."
-                )
+                    description="The avatar URL of the user.",
+                ),
             ),
-            description="The user of the audit log event."
+            description="The user of the audit log event.",
         ),
         th.Property(
             "token_id",
             th.StringType,
-            description="The token id associated with this event."
+            description="The token id associated with this event.",
         ),
         th.Property(
             "token_name",
             th.StringType,
-            description="The token name associated with this event."
+            description="The token name associated with this event.",
         ),
         th.Property(
             "req_org_admin",
             th.BooleanType,
-            description="Required organization admin role."
+            description="Required organization admin role.",
         ),
         th.Property(
-            "req_stack_admin",
-            th.BooleanType,
-            description="Required stack admin role."
+            "req_stack_admin", th.BooleanType, description="Required stack admin role."
         ),
         th.Property(
             "auth_failure",
             th.BooleanType,
-            description="Event was the result of an authentication check failure."
+            description="Event was the result of an authentication check failure.",
         ),
     ).to_dict()
 
-    def first_timestamp(self, context):
-        return self.get_starting_timestamp(context).timestamp()
-
     def get_new_paginator(self, context: Context | None) -> BaseAPIPaginator:
-        return AuditLogsPaginator(self.next_page_token_jsonpath, self.first_timestamp(context))
-    
+        """Get a fresh paginator for this API endpoint.
+
+        Returns:
+            A paginator instance.
+        """
+        return AuditLogsPaginator(
+            self.next_page_token_jsonpath,
+            self.get_starting_timestamp(context).timestamp(),
+        )
+
     def request_records(self, context: Context | None) -> t.Iterable[dict]:
         """Request records from REST endpoint(s), returning response records.
 
@@ -200,23 +196,22 @@ class AuditLogs(_OrgPartitionedStream):
         Returns:
             A dictionary of URL query parameters.
         """
-        params = {'pageSize': 100}
-        since = round(self.first_timestamp(context))
+        params = {"pageSize": 100}
+        since = round(self.get_starting_timestamp(context).timestamp())
         if next_page_token:
-            until = next_page_token
+            until = int(next_page_token)
         else:
             until = round(self.get_replication_key_signpost(context).timestamp())
         params["startTime"] = since
         params["endTime"] = until
         return params
 
-
     def post_process(
         self,
         row: dict,
-        context: dict | None = None,  # noqa: ARG002
+        context: dict | None = None,
     ) -> dict | None:
         """Post-process a row of data."""
-        row = super().post_process(row, context)
-        row["timestamp"] = datetime.fromtimestamp(row["timestamp"])
+        row = super().post_process(row, context) or {}
+        row["timestamp"] = datetime.fromtimestamp(row["timestamp"], tz=timezone.utc)
         return row
