@@ -1,5 +1,5 @@
 [flake8]
-ignore = DAR
+ignore = DAR,W503
 max-line-length = 88
 docstring-convention = google
 per-file-ignores =

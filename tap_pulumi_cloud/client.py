@@ -2,23 +2,25 @@
 
 from __future__ import annotations
 
-from typing import Any
+import typing as t
+from http import HTTPStatus
+from typing import TYPE_CHECKING, Any
 
+if TYPE_CHECKING:
+    import requests
 import humps
 from singer_sdk import RESTStream
 from singer_sdk.authenticators import APIKeyAuthenticator
+from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
 from singer_sdk.helpers._typing import TypeConformanceLevel
 
-import requests
-from singer_sdk.exceptions import FatalAPIError, RetriableAPIError
-from http import HTTPStatus
 
 class PulumiCloudStream(RESTStream):
     """Pulumi Cloud stream class."""
 
     url_base = "https://api.pulumi.com"
     next_page_token_jsonpath = "$.continuationToken"  # noqa: S105
-    tolerated_http_errors = []
+    tolerated_http_errors: t.Sequence[int] = []
 
     TYPE_CONFORMANCE_LEVEL = TypeConformanceLevel.ROOT_ONLY
 
@@ -64,7 +66,7 @@ class PulumiCloudStream(RESTStream):
         Returns:
             Mapping of URL query parameters.
         """
-        params: dict = {'pageSize': 100}
+        params: dict = {"pageSize": 100}
         if next_page_token:
             params["continuationToken"] = next_page_token
         return params
@@ -76,14 +78,19 @@ class PulumiCloudStream(RESTStream):
     ) -> dict | None:
         """Post-process a row of data."""
         return humps.decamelize(row)
-    
 
-    def parse_response(self, response: requests.Response):
+    def parse_response(self, response: requests.Response) -> t.Iterable[dict]:
+        """Parse the response and return an iterator of result records.
+
+        Args:
+            response: A raw :class:`requests.Response`
+
+        Yields:
+            One item for every item found in the response.
+        """
         if response.status_code in self.tolerated_http_errors:
             return []
-        else:
-            return super().parse_response(response)
-
+        return super().parse_response(response)
 
     def validate_response(self, response: requests.Response) -> None:
         """Validate HTTP response.
