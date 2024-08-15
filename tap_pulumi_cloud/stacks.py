@@ -455,7 +455,7 @@ class StackResources(PulumiCloudStream):
         ),
         th.Property(
             "protect",
-            th.StringType,
+            th.BooleanType,
             description="The resource is protected for deletion",
         ),
         th.Property(
