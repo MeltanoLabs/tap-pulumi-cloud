@@ -26,5 +26,5 @@ class RumUsageDaily(_OrgPartitionedStream):
         th.Property("month", th.IntegerType, description="The month of the RUM usage."),
         th.Property("day", th.IntegerType, description="The day of the RUM usage."),
         th.Property("resources", th.IntegerType, description="Daily RUM usage."),
-        th.Property("resourceHours", th.IntegerType, description="Hourly RUM usage."),
+        th.Property("resource_hours", th.IntegerType, description="Hourly RUM usage."),
     ).to_dict()
