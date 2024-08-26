@@ -3,8 +3,23 @@ name: Test tap-pulumi-cloud
 on:
   push:
     branches: [main]
+    paths:
+    - .github/workflows/test.yml
+    - tap_pulumi_cloud/**
+    - tests/**
+    - noxfile.py
+    - poetry.lock
+    - pyproject.toml
   pull_request:
+    branches: [main]
     types: [opened, synchronize, reopened]
+    paths:
+    - .github/workflows/test.yml
+    - tap_pulumi_cloud/**
+    - tests/**
+    - noxfile.py
+    - poetry.lock
+    - pyproject.toml
 
 jobs:
   test:
