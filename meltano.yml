@@ -21,6 +21,7 @@ plugins:
       kind: password
       label: API Token
       description: API Token for Pulumi Cloud
+      sensitive: true
     - name: requests_cache.enabled
       kind: boolean
       label: Enable Requests Cache
@@ -29,9 +30,14 @@ plugins:
       kind: object
       label: Requests Cache Config
       description: Configuration for requests cache
-    repository: https://github.com/edgarrmondragon/tap-pulumi-cloud
+    - name: start_date
+      kind: date_iso8601
+      value: 2024-01-01T00:00:00+00:00
+      label: Start Date
+      description: Start date
     config:
       organizations: [meltano]
+    repository: https://github.com/edgarrmondragon/tap-pulumi-cloud
   loaders:
   - name: target-jsonl
     variant: andyh1203
