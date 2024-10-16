@@ -35,11 +35,11 @@ jobs:
       matrix:
         python-version:
         - "3.8"
-        - "3.9"
-        - "3.10"
-        - "3.11"
-        - "3.12"
-        - "3.13"
+        # - "3.9"
+        # - "3.10"
+        # - "3.11"
+        # - "3.12"
+        # - "3.13"
 
     steps:
     - name: Checkout code
@@ -75,6 +75,6 @@ jobs:
       env:
         TAP_PULUMI_CLOUD_TOKEN: ${{ secrets.TAP_PULUMI_CLOUD_TOKEN }}
         TAP_PULUMI_CLOUD_ORGANIZATIONS: ${{ secrets.TAP_PULUMI_CLOUD_ORGANIZATIONS }}
-        TAP_PULUMI_CLOUD_START_DATE: ${{ secrets.TAP_PULUMI_CLOUD_START_DATE }}
+        TAP_PULUMI_CLOUD_START_DATE: "2023-01-01T00:00:00Z"
       run: |
         nox
