@@ -72,7 +72,6 @@ lint.select = [
   "ALL",
 ]
 lint.ignore = [
-  "ANN101", # missing-type-self
   "COM812", # missing-trailing-comma
   "DJ",     # flake8-django
   "FIX002", # line-contains-todo
