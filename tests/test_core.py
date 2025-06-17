@@ -15,11 +15,6 @@ TestTapPulumiCloud = get_tap_test_class(
     TapPulumiCloud,
     config={},
     suite_config=SuiteConfig(
-        # TODO(edgarrmondragon): Parent streams are evaluated before any records are
-        # emitted because child records are emitted first. This causes the tests to fail
-        # because no parent records are detected. This is a bug in the SDK.
-        # https://github.com/MeltanoLabs/tap-pulumi-cloud/issues/72
-        # max_records_limit=10,  # noqa: ERA001
         ignore_no_records_for_streams=["organization_teams"],
     ),
 )
