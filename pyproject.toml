@@ -18,11 +18,11 @@ keywords = [
   "Pulumi Cloud",
 ]
 classifiers = [
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
 ]
 license = "Apache-2.0"
 readme = "README.md"
@@ -31,13 +31,13 @@ repository = "https://github.com/edgarrmondragon/tap-pulumi-cloud"
 documentation = "https://github.com/edgarrmondragon/tap-pulumi-cloud#readme"
 
 [tool.poetry.dependencies]
-pyhumps = "^3.8.0"
-python = ">=3.9"
-requests-cache = "^1.0.1"
-singer-sdk = "~=0.47.0"
+pyhumps = ">=3.8.0,<4"
+python = ">=3.10,<4"
+requests-cache = ">=1.0.1,<2"
+singer-sdk = "~=0.48.1"
 
 [tool.poetry.group.dev.dependencies]
-singer-sdk = { version = "~=0.47.0", extras = [
+singer-sdk = { version = "*", extras = [
   "testing",
 ] }
 
