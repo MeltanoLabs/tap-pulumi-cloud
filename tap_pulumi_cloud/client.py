@@ -26,8 +26,7 @@ class PulumiCloudStream(RESTStream):
             The authenticator instance for this REST stream.
         """
         token: str = self.config["token"]
-        return APIKeyAuthenticator.create_for_stream(
-            self,
+        return APIKeyAuthenticator(
             key="Authorization",
             value=f"token {token}",
             location="header",
