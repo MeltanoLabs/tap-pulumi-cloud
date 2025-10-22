@@ -32,9 +32,9 @@ documentation = "https://github.com/edgarrmondragon/tap-pulumi-cloud#readme"
 
 [tool.poetry.dependencies]
 pyhumps = ">=3.8.0,<4"
-python = ">=3.10,<4"
+python = ">=3.10"
 requests-cache = ">=1.0.1,<2"
-singer-sdk = "~=0.49.0"
+singer-sdk = "~=0.52.0"
 
 [tool.poetry.group.dev.dependencies]
 singer-sdk = { version = "*", extras = [
