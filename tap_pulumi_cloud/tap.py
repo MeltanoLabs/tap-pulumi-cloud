@@ -58,6 +58,12 @@ class TapPulumiCloud(Tap):
             ),
             description="Cache configuration for HTTP requests",
         ),
+        th.Property(
+            "enterprise_streams",
+            th.BooleanType,
+            description="Whether to include enterprise streams",
+            default=False,
+        ),
         additional_properties=False,
     ).to_dict()
 
@@ -77,9 +83,17 @@ class TapPulumiCloud(Tap):
         Returns:
             A list of Pulumi Cloud streams.
         """
-        return [
+        pulumi_streams = [
             streams.Stacks(tap=self),
             streams.StackUpdates(tap=self),
-            streams.OrganizationMembers(tap=self),
-            streams.OrganizationTeams(tap=self),
         ]
+
+        if self.config["enterprise_streams"]:
+            pulumi_streams.extend(
+                [
+                    streams.OrganizationTeams(tap=self),
+                    streams.OrganizationMembers(tap=self),
+                ]
+            )
+
+        return pulumi_streams
