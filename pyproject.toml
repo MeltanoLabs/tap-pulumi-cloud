@@ -34,12 +34,16 @@ documentation = "https://github.com/edgarrmondragon/tap-pulumi-cloud#readme"
 pyhumps = ">=3.8.0,<4"
 python = ">=3.10"
 requests-cache = ">=1.0.1,<2"
-singer-sdk = "~=0.52.0"
+singer-sdk = "~=0.53.4"
+typing-extensions = {version = "~=4.15.0", python = "<3.12"}
 
 [tool.poetry.group.dev.dependencies]
 singer-sdk = { version = "*", extras = [
   "testing",
 ] }
+mypy = ">=1.19.0"
+ty = ">=0.0.1a29"
+types-requests = ">=2.32.4"
 
 [tool.poetry.scripts]
 # CLI declaration
@@ -105,10 +109,8 @@ lint.pydocstyle.convention = "google"
 addopts = "-vvv"
 
 [tool.mypy]
+strict = true
+warn_redundant_casts = true
+warn_unreachable = true
 warn_unused_configs = true
-
-[[tool.mypy.overrides]]
-ignore_missing_imports = true
-module = [
-  "backoff.*",
-]
+warn_unused_ignores = true

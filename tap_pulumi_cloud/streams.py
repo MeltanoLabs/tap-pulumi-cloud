@@ -2,18 +2,28 @@
 
 from __future__ import annotations
 
-import typing as t
+import sys
+from typing import TYPE_CHECKING, Any
 
 from singer_sdk import typing as th
 
 from tap_pulumi_cloud.client import PulumiCloudStream
 
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
+
+if TYPE_CHECKING:
+    from singer_sdk.helpers.types import Context, Record
+
 
 class _OrgPartitionedStream(PulumiCloudStream):
     """Base class for streams that are partitioned by organization."""
 
+    @override
     @property
-    def partitions(self) -> list[dict] | None:
+    def partitions(self) -> list[dict[Any, Any]] | None:
         """List of organizations to sync."""
         return [{"org_name": org} for org in self.config["organizations"]]
 
@@ -54,11 +64,12 @@ class Stacks(_OrgPartitionedStream):
         ),
     ).to_dict()
 
+    @override
     def get_url_params(
         self,
-        context: dict | None,
+        context: Context | None,
         next_page_token: str | None,
-    ) -> dict[str, t.Any]:
+    ) -> dict[str, Any]:
         """Get URL query parameters.
 
         Args:
@@ -75,20 +86,13 @@ class Stacks(_OrgPartitionedStream):
 
         return params
 
+    @override
     def get_child_context(
         self,
-        record: dict,
-        context: dict | None,  # noqa: ARG002
-    ) -> dict | None:
-        """Return a context object for child streams.
-
-        Args:
-            record: A record from this stream.
-            context: The stream sync context.
-
-        Returns:
-            A context object for child streams.
-        """
+        record: Record,
+        context: Context | None,
+    ) -> Context | None:
+        """Return a context object for child streams."""
         return {
             "org_name": record["org_name"],
             "project_name": record["project_name"],
@@ -222,34 +226,22 @@ class OrganizationMembers(_OrgPartitionedStream):
         ),
     ).to_dict()
 
+    @override
     def get_url_params(
         self,
-        context: dict | None,
+        context: Context | None,
         next_page_token: str | None,
-    ) -> dict[str, t.Any]:
-        """Return a dictionary of URL query parameters.
-
-        Args:
-            context: The stream sync context.
-            next_page_token: A token for the next page of results.
-
-        Returns:
-            A dictionary of URL query parameters.
-        """
+    ) -> dict[str, Any]:
+        """Get URL query parameters."""
         params = super().get_url_params(context, next_page_token)
         params["type"] = "backend"
         return params
 
-    def post_process(self, row: dict, context: dict | None = None) -> dict | None:
-        """Post-process a row.
-
-        Args:
-            row: A row.
-            context: The stream sync context.
-
-        Returns:
-            The processed row.
-        """
+    @override
+    def post_process(
+        self, row: Record, context: Context | None = None
+    ) -> Record | None:
+        """Post-process a row."""
         new_row = super().post_process(row, context)
         if new_row:
             new_row["user_name"] = new_row["user"].pop("name")

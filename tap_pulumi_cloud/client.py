@@ -2,15 +2,24 @@
 
 from __future__ import annotations
 
-from typing import Any
+import sys
+from typing import TYPE_CHECKING, Any
 
 import humps
 from singer_sdk import RESTStream
 from singer_sdk.authenticators import APIKeyAuthenticator
 from singer_sdk.helpers._typing import TypeConformanceLevel
 
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
 
-class PulumiCloudStream(RESTStream):
+if TYPE_CHECKING:
+    from singer_sdk.helpers.types import Context, Record
+
+
+class PulumiCloudStream(RESTStream[str]):
     """Pulumi Cloud stream class."""
 
     url_base = "https://api.pulumi.com"
@@ -18,6 +27,7 @@ class PulumiCloudStream(RESTStream):
 
     TYPE_CONFORMANCE_LEVEL = TypeConformanceLevel.ROOT_ONLY
 
+    @override
     @property
     def authenticator(self) -> APIKeyAuthenticator:
         """Get an authenticator object.
@@ -32,8 +42,9 @@ class PulumiCloudStream(RESTStream):
             location="header",
         )
 
+    @override
     @property
-    def http_headers(self) -> dict:
+    def http_headers(self) -> dict[str, str]:
         """Return the http headers needed.
 
         Returns:
@@ -45,9 +56,10 @@ class PulumiCloudStream(RESTStream):
             "Accept": "application/vnd.pulumi+8",
         }
 
+    @override
     def get_url_params(
         self,
-        context: dict | None,  # noqa: ARG002
+        context: Context | None,
         next_page_token: str | None,
     ) -> dict[str, Any]:
         """Get URL query parameters.
@@ -59,15 +71,16 @@ class PulumiCloudStream(RESTStream):
         Returns:
             Mapping of URL query parameters.
         """
-        params: dict = {}
+        params: dict[str, Any] = {}
         if next_page_token:
             params["continuationToken"] = next_page_token
         return params
 
+    @override
     def post_process(
         self,
-        row: dict,
-        context: dict | None = None,  # noqa: ARG002
-    ) -> dict | None:
+        row: Record,
+        context: Context | None = None,
+    ) -> Record | None:
         """Post-process a row of data."""
         return humps.decamelize(row)
