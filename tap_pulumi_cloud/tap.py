@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
-import typing as t
+import sys
+from typing import Any
 
 import requests_cache
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
 from tap_pulumi_cloud import streams
+
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
 
 
 class TapPulumiCloud(Tap):
@@ -25,7 +31,7 @@ class TapPulumiCloud(Tap):
         ),
         th.Property(
             "organizations",
-            th.ArrayType(th.StringType),
+            th.ArrayType(th.StringType),  # ty: ignore[invalid-argument-type]
             description="List of organizations to sync",
             required=True,
         ),
@@ -61,7 +67,8 @@ class TapPulumiCloud(Tap):
         additional_properties=False,
     ).to_dict()
 
-    def __init__(self, *args: t.Any, **kwargs: t.Any) -> None:
+    @override
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         """Initialize the tap."""
         super().__init__(*args, **kwargs)
 
@@ -71,6 +78,7 @@ class TapPulumiCloud(Tap):
                 **self.config["requests_cache"].get("config", {}),
             )
 
+    @override
     def discover_streams(self) -> list[Stream]:
         """Return a list of discovered streams.
 
