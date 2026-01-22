@@ -1,72 +1,65 @@
 [build-system]
-build-backend = "poetry_dynamic_versioning.backend"
+build-backend = "hatchling.build"
 requires = [
-  "poetry-core==2.2.1",
-  "poetry-dynamic-versioning",
+  "hatch-vcs",
+  "hatchling>=1,<2",
 ]
 
-[tool.poetry]
+[project]
 name = "tap-pulumi-cloud"
 version = "0.0.0"
 description = "Singer tap for Pulumi Cloud, built with the Meltano SDK for Singer Taps."
-authors = [
-  "Edgar Ramírez-Mondragón <edgarrm358@gmail.com>",
-]
+readme = "README.md"
 keywords = [
   "ELT",
-  "singer.io",
   "Pulumi Cloud",
+  "singer.io",
 ]
+license = "Apache-2.0"
+authors = [ { name = "Edgar Ramírez-Mondragón", email = "edgarrm358@gmail.com" } ]
+requires-python = ">=3.10"
 classifiers = [
+  "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Programming Language :: Python :: 3.14",
 ]
-license = "Apache-2.0"
-readme = "README.md"
-homepage = "https://github.com/edgarrmondragon/tap-pulumi-cloud"
-repository = "https://github.com/edgarrmondragon/tap-pulumi-cloud"
-documentation = "https://github.com/edgarrmondragon/tap-pulumi-cloud#readme"
+dependencies = [
+  "pyhumps>=3.8,<4",
+  "requests-cache>=1.0.1,<2",
+  "singer-sdk~=0.53.4",
+  "typing-extensions~=4.15.0; python_full_version<'3.12'",
+]
 
-[tool.poetry.dependencies]
-pyhumps = ">=3.8.0,<4"
-python = ">=3.10"
-requests-cache = ">=1.0.1,<2"
-singer-sdk = "~=0.53.4"
-typing-extensions = { version = "~=4.15.0", python = "<3.12" }
+urls.Documentation = "https://github.com/edgarrmondragon/tap-pulumi-cloud#readme"
+urls.Homepage = "https://github.com/edgarrmondragon/tap-pulumi-cloud"
+urls.Repository = "https://github.com/edgarrmondragon/tap-pulumi-cloud"
+scripts.tap-pulumi-cloud = "tap_pulumi_cloud.tap:TapPulumiCloud.cli"
 
-[tool.poetry.group.dev.dependencies]
-singer-sdk = { version = "*", extras = [
-  "testing",
-] }
-mypy = ">=1.19.0"
-ty = ">=0.0.1a29"
-types-requests = ">=2.32.4"
+[dependency-groups]
+dev = [
+  { include-group = "test" },
+  { include-group = "typing" },
+]
+test = [
+  "pytest>=9",
+  "pytest-github-actions-annotate-failures>=0.2",
+  "singer-sdk[testing]",
+]
+typing = [
+  "mypy>=1.19",
+  "ty>=0.0.1a29",
+  "types-requests>=2.32.4",
+  { include-group = "test" },
+]
 
-[tool.poetry.scripts]
-# CLI declaration
-"tap-pulumi-cloud" = "tap_pulumi_cloud.tap:TapPulumiCloud.cli"
-
-[tool.poetry-dynamic-versioning]
-enable = true
-format-jinja = """
-    {%- if distance == 0 -%}
-        {{ serialize_pep440(base, stage, revision) }}
-    {%- elif revision is not none -%}
-        {{ serialize_pep440(base, stage, revision + 1, dev=distance, metadata=[commit]) }}
-    {%- else -%}
-        {{ serialize_pep440(bump_version(base), stage, revision, dev=distance, metadata=[commit]) }}
-    {%- endif -%}
-"""
-metadata = true
-style = "pep440"
-vcs = "git"
+[tool.hatch.version]
+fallback-version = "0.0.0.dev0"
+source = "vcs"
 
 [tool.ruff]
-target-version = "py310"
-
 line-length = 88
 src = [
   "tap_pulumi_cloud",
@@ -105,8 +98,9 @@ lint.isort.required-imports = [
 ]
 lint.pydocstyle.convention = "google"
 
-[tool.pytest.ini_options]
-addopts = "-vvv"
+[tool.pytest]
+addopts = [ "-vvv" ]
+minversion = "9"
 
 [tool.mypy]
 strict = true
