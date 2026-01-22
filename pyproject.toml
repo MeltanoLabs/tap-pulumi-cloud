@@ -99,7 +99,7 @@ lint.isort.required-imports = [
 lint.pydocstyle.convention = "google"
 
 [tool.pytest]
-addopts = ["-vvv"]
+addopts = [ "-vvv" ]
 minversion = "9"
 
 [tool.mypy]
