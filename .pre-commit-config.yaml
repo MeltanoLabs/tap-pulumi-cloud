@@ -1,7 +1,7 @@
 ci:
   autofix_prs: true
   autofix_commit_msg: '[pre-commit.ci] auto fixes'
-  autoupdate_schedule: monthly
+  autoupdate_schedule: quarterly
   autoupdate_commit_msg: 'chore(deps): pre-commit autoupdate'
 
 repos:
@@ -26,3 +26,9 @@ repos:
     - id: ruff-check
       args: [--fix, --exit-non-zero-on-fix, --show-fixes]
     - id: ruff-format
+
+- repo: https://github.com/astral-sh/uv-pre-commit
+  rev: 0.9.26
+  hooks:
+    - id: uv-lock
+    - id: uv-sync

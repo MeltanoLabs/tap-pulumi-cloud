@@ -27,6 +27,7 @@ class TapPulumiCloud(Tap):
             "token",
             th.StringType,
             required=True,
+            secret=True,
             description="API Token for Pulumi Cloud",
         ),
         th.Property(
