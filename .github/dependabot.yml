@@ -9,6 +9,11 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default: 7
+      major: 14
+      minor: 7
+      patch: 3
     commit-message:
       prefix: "feat(deps): "
       prefix-development: "chore(deps-dev): "
@@ -24,6 +29,11 @@ updates:
     directory: "/.github/workflows"
     schedule:
       interval: monthly
+    cooldown:
+      default: 7
+      major: 14
+      minor: 7
+      patch: 3
     commit-message:
       prefix: "ci: "
     groups:
@@ -34,6 +44,11 @@ updates:
     directory: "/"
     schedule:
       interval: monthly
+    cooldown:
+      default: 7
+      major: 14
+      minor: 7
+      patch: 3
     commit-message:
       prefix: "ci: "
     groups:
