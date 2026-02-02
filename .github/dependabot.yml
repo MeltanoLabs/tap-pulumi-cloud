@@ -10,10 +10,10 @@ updates:
     schedule:
       interval: weekly
     cooldown:
-      default: 7
-      major: 14
-      minor: 7
-      patch: 3
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
     commit-message:
       prefix: "feat(deps): "
       prefix-development: "chore(deps-dev): "
@@ -30,10 +30,10 @@ updates:
     schedule:
       interval: monthly
     cooldown:
-      default: 7
-      major: 14
-      minor: 7
-      patch: 3
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
     commit-message:
       prefix: "ci: "
     groups:
@@ -45,10 +45,10 @@ updates:
     schedule:
       interval: monthly
     cooldown:
-      default: 7
-      major: 14
-      minor: 7
-      patch: 3
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
     commit-message:
       prefix: "ci: "
     groups:
