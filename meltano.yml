@@ -1,4 +1,4 @@
-version: 1
+requires_meltano: ">=4.0"
 send_anonymous_usage_stats: false
 project_id: tap-pulumi-cloud
 default_environment: dev
@@ -29,7 +29,7 @@ plugins:
       kind: object
       label: Requests Cache Config
       description: Configuration for requests cache
-    repository: https://github.com/edgarrmondragon/tap-pulumi-cloud
+    repo: https://github.com/edgarrmondragon/tap-pulumi-cloud
     config:
       organizations: [meltano]
   loaders:
