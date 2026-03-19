@@ -8,63 +8,89 @@ on:
     - .github/workflows/test.yml
     - tap_pulumi_cloud/**
     - tests/**
-    - noxfile.py
     - pyproject.toml
     - uv.lock
   pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened]
     paths:
     - .github/workflows/constraints.txt
     - .github/workflows/test.yml
     - tap_pulumi_cloud/**
     - tests/**
-    - noxfile.py
     - pyproject.toml
     - uv.lock
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  FORCE_COLOR: 1
 
 jobs:
-  test:
+  build-package:
+    name: Build & verify package
     runs-on: ubuntu-latest
-    env:
-      FORCE_COLOR: "1"
-      NOXSESSION: tests-${{ matrix.python-version }}
-      UV_CONSTRAINT: ${{ github.workspace }}/.github/workflows/constraints.txt
-      UV_PYTHON: ${{ matrix.python-version }}
+    outputs:
+      supported-python-versions: ${{ steps.baipp.outputs.supported_python_classifiers_json_array }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: hynek/build-and-inspect-python-package@f3d069d0f9a3c9169d1a483318bb0e09876a6fd6 # v2.15.0
+        id: baipp
+
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    needs: [build-package]
     strategy:
-      fail-fast: false
+      fail-fast: true
+      max-parallel: 1
       matrix:
-        python-version:
-        - "3.10"
-        - "3.11"
-        - "3.12"
-        - "3.13"
-        - "3.14"
+        python-version: ${{ fromJson(needs.build-package.outputs.supported-python-versions) }}
 
     steps:
     - name: Checkout code
       uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
       with:
-        fetch-depth: 0
-
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
-      with:
-        python-version: ${{ matrix.python-version }}
-        allow-prereleases: true
+        persist-credentials: false
 
     - name: Install uv
-      uses: astral-sh/setup-uv@803947b9bd8e9f986429fa0c5a41c367cd732b41 # v7.2.1
+      uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7.6.0
+      with:
+        python-version: ${{ matrix.python-version }}
 
     - name: Install Nox
+      env:
+        UV_CONSTRAINT: ${{ github.workspace }}/.github/workflows/constraints.txt
       run: |
-        uv tool install nox
-        nox --version
+        uv tool install --with tox-uv tox
+        tox --version
 
     - name: Run tests
       env:
         TAP_PULUMI_CLOUD_TOKEN: ${{ secrets.TAP_PULUMI_CLOUD_TOKEN }}
         TAP_PULUMI_CLOUD_ORGANIZATIONS: ${{ secrets.TAP_PULUMI_CLOUD_ORGANIZATIONS }}
         TAP_PULUMI_CLOUD_START_DATE: ${{ secrets.TAP_PULUMI_CLOUD_START_DATE }}
+        PYTHON_VERSION: ${{ matrix.python-version }}
       run: |
-        nox
+        tox -e ${PYTHON_VERSION}
+
+  typing:
+    name: Type Checking
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    - name: Setup uv
+      uses: astral-sh/setup-uv@6ee6290f1cbc4156c0bdd66691b2c144ef8df19a # v7.4.0
+    - name: Run Tox
+      run: >
+        uvx
+        --managed-python
+        --with=tox-uv
+        tox -e typing

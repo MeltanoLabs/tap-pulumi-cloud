@@ -32,7 +32,7 @@ class TapPulumiCloud(Tap):
         ),
         th.Property(
             "organizations",
-            th.ArrayType(th.StringType),  # ty: ignore[invalid-argument-type]
+            th.ArrayType(th.StringType),
             description="List of organizations to sync",
             required=True,
         ),
