@@ -28,7 +28,7 @@ dynamic = [ "version" ]
 dependencies = [
   "pyhumps>=3.8,<4",
   "requests-cache>=1.0.1,<2",
-  "singer-sdk~=0.53.4",
+  "singer-sdk~=0.54.2",
   "typing-extensions~=4.15.0; python_full_version<'3.12'",
 ]
 [[project.authors]]
