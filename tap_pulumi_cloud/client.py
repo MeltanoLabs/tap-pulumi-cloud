@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 import humps
 from singer_sdk import RESTStream
 from singer_sdk.authenticators import APIKeyAuthenticator
-from singer_sdk.helpers._typing import TypeConformanceLevel
+from singer_sdk.helpers.conform import TypeConformanceLevel
 
 if sys.version_info >= (3, 12):
     from typing import override
