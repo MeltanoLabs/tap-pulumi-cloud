@@ -113,10 +113,8 @@ warn_unused_ignores = true
 
 [tool.pytest]
 addopts = [
-  "-vvv",
+  "-v",
   "-ra",
-  "--strict-config",
-  "--strict-markers",
 ]
 filterwarnings = [ "error" ]
 log_level = "INFO"
